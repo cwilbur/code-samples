@@ -62,6 +62,10 @@ Card.prettifyArray = function (a) {
     return a.sort(Card.compare).map(function (e, i, a) { return e.displayString(); }).join(' ');
 };
 
+Card.normalizeArrayForDB = function (a) {
+    return a.sort(Card.compare).map(function(e) { return e.toDB(); });
+};
+
 Card.prototype = {
 
     constants: {
@@ -108,6 +112,14 @@ Card.prototype = {
         return this;
     },
 
+    toDB: function () {
+        var o = {};
+        o.suit = this.suit();
+        o.rank = this.rank();
+        o.serial = this.cardSerial();
+        return o;
+    },
+
     displayString: function () { return this.rank() + this.suitChar(); },
 
     longString: function () {
@@ -124,6 +136,10 @@ module.exports = {
     revivifyJSON: Card.revivifyJSON,
 
     prettifyArray: Card.prettifyArray,
+    
+    toDB: Card.toDB,
+    
+    normalizeArrayForDB: Card.normalizeArrayForDB,
 
     constants: {
         suits: suits,

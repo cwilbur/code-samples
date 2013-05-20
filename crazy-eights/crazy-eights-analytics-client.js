@@ -1,12 +1,13 @@
 //
-// crazy-eights-ai-client.js 
+// crazy-eights-analytics-client.js 
 // 
 // A node.js script implementing a fairly stupid AI client to play games of 
-// crazy eights.
+// crazy eights -- but this client records how it plays in order to generate
+// statistical information on play strategies.
 //
-// invoke as node.js crazy-eights-ai-client.js name_1 name_2 ... name_n
+// invoke as node.js crazy-eights-analytics-client.js name_1 name_2 ... name_n
 //
-// Copyright 2012 Charlton Wilbur, warts, bugs, and all.  
+// Copyright 2013 Charlton Wilbur, warts, bugs, and all.  
 //
 
 var Util = require('util');
@@ -15,6 +16,8 @@ var QS = require('querystring');
 
 var Card = require('./card.js');
 var Deck = require('./deck.js');
+var Analytics = require ('./analytics.js');
+var db = new Analytics();
 
 var logLevel = 1;
 function logIt(level, message, precision) {
@@ -69,7 +72,6 @@ function post(path, args) {
 }
 
 var names = process.argv.splice(2);
-var gameOver = 0;
 var playerInfo = {};
 var delayLength = function () { return Math.floor(Math.random() * 1000); };
 
@@ -144,22 +146,36 @@ function chooseSuit(hand) {
 function playOn(postInfo, postResponse) {
     var status = postResponse.args,
         playerId,
-        playerKey;
-
+        playerKey,
+        playerUUID;
+        
     if (postInfo.path === 'register') {
-        playerInfo[status.id] = {
-            id: status.id,
-            key: status.key,
-            name: postInfo.args.name
-        };
-        playerId = status.id;
-        playerKey = status.key;
-        post('status', { id: playerId, key: playerKey });
+		playerUUID = db.generateUUID();
+		playerInfo[status.id] = {
+			id: status.id,
+			key: status.key,
+			name: postInfo.args.name,
+			uuid: playerUUID
+		};
+		playerId = status.id;
+		playerKey = status.key;
+		db.newGame(playerUUID);
+		post('status', { id: playerId, key: playerKey });
     } else {
         playerId = postInfo.args.id;
         playerKey = postInfo.args.key;
+        playerUUID = playerInfo[playerId].uuid;
     }
 
+    if (postInfo.path === 'resign') {
+		// we have resigned
+		db.recordWinner(playerUUID, 'nobody');
+        delete playerInfo[playerId];
+        if (Object.keys(playerInfo).length === 0) {
+            db.disconnect();
+        }
+    }
+    
     if (postInfo.path === 'draw') {
         // we drew; it's still our turn, so we request status immediately
         post('status', { id: playerId, key: playerKey });
@@ -178,10 +194,27 @@ function playOn(postInfo, postResponse) {
     }
 
     if (postInfo.path === 'status') {
-        if (status.winner === playerInfo[playerId].name) {
+        if (status.players && status.players.length !== 2) {
+    		// our analytics are for 2-player games
+			post('resign', { id: playerId, key: playerKey });
+		} else if (status.winner === playerInfo[playerId].name) {
             logIt(1, "I win!");
+            db.recordWinner(playerUUID, 'player');
+            delete playerInfo[playerId];
+            if (Object.keys(playerInfo).length === 0) {
+                db.disconnect();
+            }
         } else if (status.winner !== undefined) {
             logIt(1, status.winner + ' has won the game.  I suck.');
+            if (status.winner === 'nobody') {
+            	db.recordWinner(playerUUID, 'nobody');
+            } else {
+            	db.recordWinner(playerUUID, 'opponent');
+            }
+            delete playerInfo[playerId];
+            if (Object.keys(playerInfo).length === 0) {
+                db.disconnect();
+            }
         } else if (status.currentPlayer === playerInfo[playerId].name) {
             // it's our turn!
 
@@ -189,8 +222,18 @@ function playOn(postInfo, postResponse) {
                 return Card.revivifyJSON(e);
             }),
                 revivifiedTopCard = Card.revivifyJSON(status.topCard),
-                handAsString = Card.prettifyArray(revivifiedHand),
-                chosenCard = chooseCard(revivifiedHand, revivifiedTopCard, status.currentSuit),
+                handAsString = Card.prettifyArray(revivifiedHand);
+
+			// record opponent's move
+
+			var opponentInfo = status.players[0].id === playerId ?
+				status.players[1] : status.players[0];
+		    db.recordOpponentsPlay(playerUUID, opponentInfo.cards, status.deckRemaining,
+				revivifiedTopCard, status.currentSuit);
+	
+			// figure out our move
+			
+			var chosenCard = chooseCard(revivifiedHand, revivifiedTopCard, status.currentSuit),
                 chosenSuit = chooseSuit(revivifiedHand);
 
             if (chosenCard === undefined) {
@@ -205,6 +248,10 @@ function playOn(postInfo, postResponse) {
                     + (revivifiedTopCard.rank() === '8' ? ' and current suit ' + status.currentSuit : '')
                     + ', I play ' + chosenCard.displayString()
                     + (chosenCard.rank() === '8' ? ' and declare the suit of ' + chosenSuit : ''));
+				
+				db.recordMyPlay(playerUUID, revivifiedHand, revivifiedTopCard,
+					revivifiedHand.length, status.deckRemaining, chosenCard, chosenSuit);
+					
                 post('play', { id: playerId, key: playerKey, card: chosenCard.cardSerial(), declaredSuit: chosenSuit });
             }
         } else {

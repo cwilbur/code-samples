@@ -105,6 +105,17 @@ Game.prototype = {
         return st;
     },
 
+	resign: function (player) {
+		logIt(1, 'Player ' + player.name + 'attempting to resign.');
+
+        if (this.players.indexOf(player) === -1) {
+            throw { name: 'NotInGame', message: 'Player not in this game' };
+        }
+      
+      	logIt(1, 'Resignation accepted.  Everyone loses.'); 
+        this.winner = 'nobody';
+	},        
+
     play: function (player, card, eightSuit) {
         logIt(1, 'Player ' + player.name + ' attempting to play ' + card.displayString()
             + (card.rank() === '8' ? (' and declaring suit ' + eightSuit) : ''));
@@ -209,8 +220,9 @@ Player.prototype = {
 
 // HTTP server
 
-// verbs: register, status, play, draw
+// verbs: register, resign, status, play, draw
 // register: takes name, responds with id, key
+// resign: responds with OK or NOT OK
 // status: takes id, key; responds with game status info
 // play: takes id, key, card, suit(only meaningful on 8); responds with OK or NOT OK
 // draw: takes id, key; responds with OK or NOT OK
@@ -221,6 +233,23 @@ var gameMoves = {
             response = JSON.stringify({ id: p.playerId, key: p.playerKey });
         logIt(3,  'Response(' + res.crazyEightsSerial + '): 200 ' +  response);
         res.end(response);
+    },
+
+	'/resign': function (params, res) {
+		var p = players[params.id],
+			response;
+
+        if (p.playerKey !== params.key) {
+            throw { name: 'Impostor', message: 'Player key mismatch' };
+        }
+        
+    	try {
+            p.game.resign(p);
+            response = JSON.stringify({ status: 'OK' });
+        } catch (e) {
+            e.status = 'NOT OK';
+            response = JSON.stringify(e);
+        }
     },
 
     '/status': function (params, res) {
