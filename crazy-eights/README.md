@@ -78,10 +78,10 @@ begun.  Here are the things I'm working on next:
   	ability with a client-side Javascript MVC framework
   	was one of the original goals.
   	
-   * An iOS client, because integrating web services and
+  * An iOS client, because integrating web services and
    	mobile software was part of my original goal. 
 
-   * Getting the whole thing running in the cloud
+  * Getting the whole thing running in the cloud
    	somewhere, probably Amazon Web Services.  If
    	nothing else, I have a few pie-in-the-sky ideas
    	that this might help to crystallize.
