@@ -8,29 +8,66 @@
 
 'use strict';
 
-// first: constants
+// utility functions
 
-var suits = ['C', 'D', 'H', 'S'];
+function ucfirst (str) {
+    return str.charAt(0).toUpperCase() + str.substring(1);
+}
 
-var suitChars = ['♣', '♦', '♥', '♠'];
+// first: building blocks
 
-var suitNames = ['Clubs', 'Diamonds', 'Hearts', 'Spades'];
+function Suit (newSuit) {
+    this.value =  Suit.index[newSuit.toString()];
+    if (this.value === undefined) {
+        throw new Error ('Suit constructor called with invalid value: [' + newSuit + ']');
+    }
+};
 
-var ranks = ['A', '2', '3', '4', '5', '6', '7',
-          '8', '9', 'T', 'J', 'Q', 'K'];
+Suit.definition = [
+    { letter: 'C', symbol: '♣', name: 'Clubs', alternates: ['Club'] },
+    { letter: 'D', symbol: '♦', name: 'Diamonds', alternates: ['Diamond'] },
+    { letter: 'H', symbol: '♥', name: 'Hearts', alternates: ['Heart'] },
+    { letter: 'S', symbol: '♠', name: 'Spades', alternates: ['Spade'] }
+];
 
-var rankNames = ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
-          'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King'];
+Suit.index = {};
+Suit.definition.forEach(function (e, i) {
+    ['letter', 'symbol', 'name'].forEach (function (key) {
+        Suit.index[e[key]] = i;
+        Suit.index[e[key].toLowerCase()] = i;
+        Suit.prototype['as' + ucfirst(key)] = function () {
+            return Suit.definition[this.value][key];
+        };
+    });
+    e.alternates.forEach(function (alt) {
+        Suit.index[alt] = i;
+        Suit.index[alt.toLowerCase()] = 1;
+    });
+    Suit.index[i.toString()] = i;
+});
 
-var i;
+module.exports = {
+    ucfirst: ucfirst,
+    Suit: Suit
+}
 
-var suitsIndex = {};
-var ranksIndex = {};
+/*
 
-suits.concat(suitChars, suitNames).forEach(function (e, i, a) {
+Card.ranks = ['A', '2', '3', '4', '5', '6', '7',
+    '8', '9', 'T', 'J', 'Q', 'K'];
+
+Card.rankNames = ['Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven',
+    'Eight', 'Nine', 'Ten', 'Jack', 'Queen', 'King'];
+
+Card.suitsIndex = {};
+
+Card.ranksIndex = {};
+
+Card.suits.concat(Card.suitChars, Card.suitNames).forEach(function (e, i, a) {
     suitsIndex[e.toLowerCase()] = i;
 });
-ranks.concat(rankNames).forEach(function (e, i, a) {
+
+Card.ranks.concat(Card.rankNames).forEach(function (e, i, a) {
     ranksIndex[e.toLowerCase()] = i;
 });
 
@@ -139,16 +176,7 @@ module.exports = {
     
     toDB: Card.toDB,
     
-    normalizeArrayForDB: Card.normalizeArrayForDB,
-
-    constants: {
-        suits: suits,
-        suitChars: suitChars,
-        suitNames: suitNames,
-        ranks: ranks,
-        rankNames: rankNames,
-        suitsIndex: suitsIndex,
-        ranksIndex: ranksIndex,
-    },
+    normalizeArrayForDB: Card.normalizeArrayForDB
 };
 
+*/
