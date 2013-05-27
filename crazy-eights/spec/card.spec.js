@@ -1,8 +1,13 @@
-//
-// card.spec.js
-//
-// Jasmine unit test suite for the Suit, Rank, Card, and Deck classes
-//
+/**********************************************************************
+ *
+ * card.spec.js
+ *
+ * Jasmine unit test suite for the Suit, Rank, Card, and Deck classes
+ *
+ * Copyright 2013 Charlton Wilbur, warts, bugs, and all.
+ *
+ **********************************************************************/
+
 
 var util = require('util');
 
@@ -14,7 +19,9 @@ var Rank = cardLib.Rank;
 var Card = cardLib.Card;
 var Deck = cardLib.Deck;
 
-function dump (arg) { console.log(util.inspect(arg, { showHidden: true })); }
+function dump (arg) {
+    console.log(util.inspect(arg, { showHidden: true }));
+}
 
 describe('utility function ucfirst', function (){
 
