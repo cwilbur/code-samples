@@ -18,6 +18,17 @@ function ucfirst (str) {
     return str.charAt(0).toUpperCase() + str.substring(1);
 }
 
+function qw(str) {
+    if (typeof str === 'number') {
+        return [str.toString()];
+    } else if (typeof str === 'string') {
+        return str.split(/\s+/);
+    } else {
+        return [];
+    }
+}
+
+
 // Suits
 
 function Suit(newSuit) {
@@ -64,11 +75,17 @@ Suit.definition.forEach(function (suit, index) {
     Suit.index[index.toString()] = index;
 });
 
-[ 'letter', 'symbol', 'name' ].forEach(function (key){
-    Suit.prototype['as' + ucfirst(key)] = function (){
-        return Suit.definition[this.value][key];
-    };
-});
+Suit.prototype.asLetter = function (){
+    return Suit.definition[this.value].letter;
+};
+
+Suit.prototype.asSymbol = function (){
+    return Suit.definition[this.value].symbol;
+};
+
+Suit.prototype.asName = function (){
+    return Suit.definition[this.value].name;
+};
 
 Suit.prototype.asValue = function (){
     return this.value;
@@ -109,9 +126,6 @@ Rank.definition.forEach(function (rank, index){
         } else if (typeof rank[key] === 'number') {
             Rank.index[rank[key].toString] = index;
         }
-        Rank.prototype['as' + ucfirst(key)] = function () {
-            return Rank.definition[this.value][key];
-        };
 
         if (rank.alternates !== undefined) {
             rank.alternates.forEach(function (alt){
@@ -121,6 +135,18 @@ Rank.definition.forEach(function (rank, index){
         }
     });
 });
+
+Rank.prototype.asLetter = function (){
+    return Rank.definition[this.value].letter;
+};
+
+Rank.prototype.asName = function (){
+    return Rank.definition[this.value].name;
+};
+
+Rank.prototype.asValue = function (){
+    return this.value;
+};
 
 // Cards
 
@@ -149,7 +175,7 @@ function Card(){
                 + util.inspect(arguments[0]) + ']');
         }
         try {
-            this.suit = new Rank(arguments[1]);
+            this.suit = new Suit(arguments[1]);
         } catch (err) {
             throw new Error('Bad suit argument to Card constructor: ['
                 + util.inspect(arguments[1]) + ']');
@@ -158,7 +184,7 @@ function Card(){
         throw new Error('Card constructor called with too many arguments');
     }
 
-    this.value = 100 * this.suit.asValue() + this.card.asValue();
+    this.value = 100 * this.suit.asValue() + this.rank.asValue();
 }
 
 Card.prototype.asValue = function () {
@@ -167,7 +193,7 @@ Card.prototype.asValue = function () {
 
 Card.prototype.compare = function (otherCard){
     var x = this.value - otherCard.asValue();
-    return x / Math.abs(x);
+    return x ? x / Math.abs(x) : x;
 };
 
 Card.prototype.asShortASCIIString = function (){
@@ -182,15 +208,73 @@ Card.prototype.asLongString = function (){
     return this.rank.asName() + ' of ' + this.suit.asName();
 };
 
+// Decks & Hands
 
+function Deck() {
+    this.cards = [];
+    return this;
+}
+
+Deck.prototype.newDeck = function (){
+    var self = this;
+    qw('C D H S').forEach(function (suitChar){
+        qw('A 2 3 4 5 6 7 8 9 T J Q K').forEach(function (rankChar){
+            self.cards.push(new Card(rankChar, suitChar));
+        });
+    });
+
+    return this;
+};
+
+Deck.prototype.shuffle = function (){
+    // fisher-yates shuffle: given array with elements 0..n,
+    // for each index i from n down to 1, pick a random index j
+    // and swap elements at i and j.
+
+    var i, j, tmp;
+    for (i = this.cards.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        tmp = this.cards[i];
+        this.cards[i] = this.cards[j];
+        this.cards[j] = tmp;
+    }
+    return this;
+};
+
+Deck.prototype.pullTopCard = function (){
+    return this.cards.shift();
+};
+
+Deck.prototype.topCard = function (){
+    return this.cards[0];
+};
+
+Deck.prototype.bottomCard = function (){
+    return this.cards[this.cards.length - 1];
+};
+
+Deck.prototype.sort = function (){
+    this.cards.sort(function (a, b){ return a.compare(b)});
+};
+
+Deck.prototype.addCard = function (card){
+    this.cards.push(card);
+    return this;
+};
+
+Deck.prototype.count = function (){
+    return this.cards.length;
+};
 
 // Exports
 
-
 module.exports = {
+    qw: qw,
     ucfirst: ucfirst,
     Suit: Suit,
     Rank: Rank,
-    Card: Card
+    Card: Card,
+    Deck: Deck,
+    Hand: Deck
 };
 
