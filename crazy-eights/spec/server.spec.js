@@ -217,5 +217,42 @@ describe('Game class objects', function(){
         });
     });
 
+    it('should correctly add players and start game', function () {
+        [2, 3, 4, 5].forEach(function (playerCount){
+            var g = new testMe.Game(playerCount);
+            var pNames = testPlayerNames.slice(0, playerCount);
+
+            while (pNames.length > 1) {
+                var p = new testMe.Player(pNames.shift(), 'test', 0);
+                g.addPlayer(p);
+
+                expect(testMe.Game.byPlayerId[p.playerId]).toBe(g);
+                expect(g.players.length).toBe(playerCount - pNames.length);
+                expect(g.isFull()).toBeFalsy();
+            }
+
+            p = new testMe.Player(pNames.shift(), 'test', 0);
+            g.addPlayer(p);
+
+            expect(testMe.Game.byPlayerId[p.playerId]).toBe(g);
+            expect(g.players.length).toBe(playerCount);
+            expect(g.isFull()).toBeTruthy();
+
+            // and it kicked off the game automatically
+
+            expect(g.players.length).toEqual(playerCount);
+            expect(g.players.length).toEqual(g.desiredPlayers);
+            expect(g.drawPile.count()).toEqual(52 - playerCount * 8 - 1);
+            expect(g.discardPile.count()).toEqual(1);
+            expect(g.history.length).toEqual(0);
+            expect(g.calledSuit).not.toBeDefined();
+            expect(g.gameOver).toBeFalsy();
+            expect(g.winner).not.toBeDefined();
+
+        });
+    });
+
+
+
 });
 
