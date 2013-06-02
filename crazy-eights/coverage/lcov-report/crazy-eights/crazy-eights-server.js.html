@@ -1,0 +1,1520 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for crazy-eights/crazy-eights-server.js</title>
+    <meta charset="utf-8">
+
+    <link rel="stylesheet" href="../prettify.css">
+
+    <style>
+        body, html {
+            margin:0; padding: 0;
+        }
+        body {
+            font-family: Helvetica Neue, Helvetica,Arial;
+            font-size: 10pt;
+        }
+        div.header, div.footer {
+            background: #eee;
+            padding: 1em;
+        }
+        div.header {
+            z-index: 100;
+            position: fixed;
+            top: 0;
+            border-bottom: 1px solid #666;
+            width: 100%;
+        }
+        div.footer {
+            border-top: 1px solid #666;
+        }
+        div.body {
+            margin-top: 10em;
+        }
+        div.meta {
+            font-size: 90%;
+            text-align: center;
+        }
+        h1, h2, h3 {
+            font-weight: normal;
+        }
+        h1 {
+            font-size: 12pt;
+        }
+        h2 {
+            font-size: 10pt;
+        }
+        pre {
+            font-family: Consolas, Menlo, Monaco, monospace;
+            margin: 0;
+            padding: 0;
+            line-height: 14px;
+            font-size: 14px;
+            -moz-tab-size: 2;
+            -o-tab-size:  2;
+            tab-size: 2;
+        }
+
+        div.path { font-size: 110%; }
+        div.path a:link, div.path a:visited { color: #000; }
+        table.coverage { border-collapse: collapse; margin:0; padding: 0 }
+
+        table.coverage td {
+            margin: 0;
+            padding: 0;
+            color: #111;
+            vertical-align: top;
+        }
+        table.coverage td.line-count {
+            width: 50px;
+            text-align: right;
+            padding-right: 5px;
+        }
+        table.coverage td.line-coverage {
+            color: #777 !important;
+            text-align: right;
+            border-left: 1px solid #666;
+            border-right: 1px solid #666;
+        }
+
+        table.coverage td.text {
+        }
+
+        table.coverage td span.cline-any {
+            display: inline-block;
+            padding: 0 5px;
+            width: 40px;
+        }
+        table.coverage td span.cline-neutral {
+            background: #eee;
+        }
+        table.coverage td span.cline-yes {
+            background: #b5d592;
+            color: #999;
+        }
+        table.coverage td span.cline-no {
+            background: #fc8c84;
+        }
+
+        .cstat-yes { color: #111; }
+        .cstat-no { background: #fc8c84; color: #111; }
+        .fstat-no { background: #ffc520; color: #111 !important; }
+        .cbranch-no { background:  yellow !important; color: #111; }
+        .missing-if-branch {
+            display: inline-block;
+            margin-right: 10px;
+            position: relative;
+            padding: 0 4px;
+            background: black;
+            color: yellow;
+            xtext-decoration: line-through;
+        }
+        .missing-if-branch .typ {
+            color: inherit !important;
+        }
+
+        .entity, .metric { font-weight: bold; }
+        .metric { display: inline-block; border: 1px solid #333; padding: 0.3em; background: white; }
+        .metric small { font-size: 80%; font-weight: normal; color: #666; }
+
+        div.coverage-summary table { border-collapse: collapse; margin: 3em; font-size: 110%; }
+        div.coverage-summary td, div.coverage-summary table  th { margin: 0; padding: 0.25em 1em; border-top: 1px solid #666; border-bottom: 1px solid #666; }
+        div.coverage-summary th { text-align: left; border: 1px solid #666; background: #eee; font-weight: normal; }
+        div.coverage-summary th.file { border-right: none !important; }
+        div.coverage-summary th.pic { border-left: none !important; text-align: right; }
+        div.coverage-summary th.pct { border-right: none !important; }
+        div.coverage-summary th.abs { border-left: none !important; text-align: right; }
+        div.coverage-summary td.pct { text-align: right; border-left: 1px solid #666; }
+        div.coverage-summary td.abs { text-align: right; font-size: 90%; color: #444; border-right: 1px solid #666; }
+        div.coverage-summary td.file { text-align: right; border-left: 1px solid #666; white-space: nowrap;  }
+        div.coverage-summary td.pic { min-width: 120px !important;  }
+        div.coverage-summary a:link { text-decoration: none; color: #000; }
+        div.coverage-summary a:visited { text-decoration: none; color: #333; }
+        div.coverage-summary a:hover { text-decoration: underline; }
+        div.coverage-summary tfoot td { border-top: 1px solid #666; }
+
+        div.coverage-summary .yui3-datatable-sort-indicator, div.coverage-summary .dummy-sort-indicator {
+            height: 10px;
+            width: 7px;
+            display: inline-block;
+            margin-left: 0.5em;
+        }
+        div.coverage-summary .yui3-datatable-sort-indicator {
+            background: url("http://yui.yahooapis.com/3.6.0/build/datatable-sort/assets/skins/sam/sort-arrow-sprite.png") no-repeat scroll 0 0 transparent;
+        }
+        div.coverage-summary .yui3-datatable-sorted .yui3-datatable-sort-indicator {
+            background-position: 0 -20px;
+        }
+        div.coverage-summary .yui3-datatable-sorted-desc .yui3-datatable-sort-indicator {
+            background-position: 0 -10px;
+        }
+
+        .high { background: #b5d592 !important; }
+        .medium { background: #ffe87c !important; }
+        .low { background: #fc8c84 !important; }
+
+        span.cover-fill, span.cover-empty {
+            display:inline-block;
+            border:1px solid #444;
+            background: white;
+            height: 12px;
+        }
+        span.cover-fill {
+            background: #ccc;
+            border-right: 1px solid #444;
+        }
+        span.cover-empty {
+            background: white;
+            border-left: none;
+        }
+        span.cover-full {
+            border-right: none !important;
+        }
+        pre.prettyprint {
+            border: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .com { color: #999 !important; }
+    </style>
+</head>
+<body>
+<div class="header medium">
+    <h1>Code coverage report for <span class="entity">crazy-eights/crazy-eights-server.js</span></h1>
+    <h2>
+        
+        Statements: <span class="metric">50% <small>(99 / 198)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Branches: <span class="metric">30.51% <small>(18 / 59)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Functions: <span class="metric">42.86% <small>(12 / 28)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+        
+        Lines: <span class="metric">50.25% <small>(99 / 197)</small></span> &nbsp;&nbsp;&nbsp;&nbsp;
+        
+    </h2>
+    <div class="path"><a href="../index.html">All files</a> &#187; <a href="index.html">crazy-eights/</a> &#187; crazy-eights-server.js</div>
+</div>
+<div class="body">
+<pre><table class="coverage">
+<tr><td class="line-count">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+239
+240
+241
+242
+243
+244
+245
+246
+247
+248
+249
+250
+251
+252
+253
+254
+255
+256
+257
+258
+259
+260
+261
+262
+263
+264
+265
+266
+267
+268
+269
+270
+271
+272
+273
+274
+275
+276
+277
+278
+279
+280
+281
+282
+283
+284
+285
+286
+287
+288
+289
+290
+291
+292
+293
+294
+295
+296
+297
+298
+299
+300
+301
+302
+303
+304
+305
+306
+307
+308
+309
+310
+311
+312
+313
+314
+315
+316
+317
+318
+319
+320
+321
+322
+323
+324
+325
+326
+327
+328
+329
+330
+331
+332
+333
+334
+335
+336
+337
+338
+339
+340
+341
+342
+343
+344
+345
+346
+347
+348
+349
+350
+351
+352
+353
+354
+355
+356
+357
+358
+359
+360
+361
+362
+363
+364
+365
+366
+367
+368
+369
+370
+371
+372
+373
+374
+375
+376
+377
+378
+379
+380
+381
+382
+383
+384
+385
+386
+387
+388
+389
+390
+391
+392
+393
+394
+395
+396
+397
+398
+399
+400
+401
+402
+403
+404
+405
+406</td><td class="line-coverage"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">10119</span>
+<span class="cline-any cline-yes">10119</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10119</span>
+<span class="cline-any cline-yes">161931</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">10119</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-yes">92</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">66</span>
+<span class="cline-any cline-yes">45</span>
+<span class="cline-any cline-yes">17</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">45</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18</span>
+<span class="cline-any cline-yes">18</span>
+<span class="cline-any cline-yes">28</span>
+<span class="cline-any cline-yes">28</span>
+<span class="cline-any cline-yes">28</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">18</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-yes">21</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">117</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-yes">7</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-yes">3</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">66</span>
+<span class="cline-any cline-yes">38</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">28</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">66</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">66</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">66</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-yes">160</span>
+<span class="cline-any cline-yes">528</span>
+<span class="cline-any cline-yes">528</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-yes">20</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**********************************************************************
+ *
+ * crazy-eights-server.js
+ *
+ * A node.js script implementing a web server and web services
+ * protocol over HTTP to manage games of crazy eights.
+ *
+ * Invoke as node crazy-eights-server.js
+ *
+ * Copyright 2013 Charlton Wilbur, warts, bugs, and all.
+ *
+ **********************************************************************/
+&nbsp;
+var http = require('http');
+var url = require('url');
+var qs = require('querystring');
+&nbsp;
+var util = require('util');
+&nbsp;
+var Deck = require('./card.js').Deck;
+var Hand = require('./card.js').Hand;
+&nbsp;
+// player management
+&nbsp;
+function generateKey(length) {
+    var i;
+    var key = '';
+&nbsp;
+    for (i = 0; i &lt; length; i++) {
+        key += Math.floor(Math.random()*16).toString(16);
+    }
+&nbsp;
+    return key;
+}
+&nbsp;
+function Player(name, playerClass, desiredGameSize) {
+    this.name = name;
+    this.class = playerClass;
+    this.desiredGameSize = desiredGameSize;
+    this.playerId = Player.playerId;
+    Player.playerId++;
+    this.playerKey = generateKey(16);
+    this.hand = new Hand();
+    return this;
+}
+&nbsp;
+Player.playerId = 1;
+Player.allPlayers = {};
+&nbsp;
+Player.prototype.assignToGame = function () {
+    // if player insists on a particular size of game, assign him
+    // to that size game.
+&nbsp;
+    if (this.desiredGameSize !== 0) {
+        if (Game.waitingGames[this.desiredGameSize] === undefined) {
+            Game.waitingGames[this.desiredGameSize] = new Game(this.desiredGameSize);
+        }
+        Game.waitingGames[this.desiredGameSize].addPlayer(this);
+    }
+&nbsp;
+    // if there are no waiting games, put him in a 2-player
+&nbsp;
+    else if (Object.keys(Game.waitingGames).length === 0) {
+        Game.waitingGames[2] = new Game(2);
+        Game.waitingGames[2].addPlayer(this);
+    }
+&nbsp;
+    // otherwise, assign him to the largest game still waiting for players
+&nbsp;
+    else {
+&nbsp;
+        var largestGame = { desiredPlayers: -1 };
+        Object.keys(Game.waitingGames).forEach(function (size){
+            var thisGame = Game.waitingGames[size];
+            <span class="missing-if-branch" title="else path not taken"" >E</span>if (largestGame.desiredPlayers &lt; thisGame.desiredPlayers) {
+                largestGame = thisGame;
+            }
+        });
+&nbsp;
+        largestGame.addPlayer(this);
+    }
+};
+&nbsp;
+// game management
+&nbsp;
+function Game(desiredPlayers) {
+&nbsp;
+    this.desiredPlayers = desiredPlayers;
+    this.players = [];
+    this.currentPlayer = 0;
+    this.drawPile = new Deck().newDeck().shuffle();
+    this.discardPile = new Deck();
+    this.calledSuit = undefined;
+    this.history = [];
+    this.gameOver = false;
+    this.winner = undefined;
+    return this;
+}
+&nbsp;
+Game.waitingGames = {};
+Game.byPlayerId = {};
+&nbsp;
+Game.prototype.isFull = function () {
+    return this.players.length === this.desiredPlayers;
+};
+&nbsp;
+Game.prototype.popCurrentHistoryRecord = function () {
+    var record;
+&nbsp;
+    if (this.history.length === 0) {
+        record = { playerIndex: this.currentPlayer, draws: 0 };
+    }
+    else {
+        record = this.history.pop();
+        if (record.playerIndex !== this.currentPlayer) {
+            this.history.push(record);
+            record = { playerIndex: this.currentPlayer, draws: 0 };
+        }
+    }
+&nbsp;
+    return record;
+};
+&nbsp;
+Game.prototype.recordDraw = function () {
+    var record = this.popCurrentHistoryRecord();
+    record.draws++;
+    this.history.push(record);
+};
+&nbsp;
+Game.prototype.recordPlay = function (card, calledSuit) {
+    var record = this.popCurrentHistoryRecord();
+    record.card = card.asValue();
+    if (card.rank.asValue() === 8) {
+        record.calledSuit = calledSuit.asValue();
+    }
+    this.history.push(record);
+};
+&nbsp;
+Game.prototype.addPlayer = function (player) {
+    if (Math.floor(Math.random() * 100) % 2) {
+        this.players.push(player);
+    }
+    else {
+        this.players.unshift(player);
+    }
+&nbsp;
+    Game.byPlayerId[player.playerId] = this;
+&nbsp;
+    if (this.isFull()) {
+&nbsp;
+        delete Game.waitingGames[this.desiredPlayers];
+        this.start();
+&nbsp;
+    }
+    return this;
+};
+&nbsp;
+Game.prototype.start = function () {
+    var i;
+    var self = this;
+&nbsp;
+    for (i = 0; i &lt; 8; i++) {
+        this.players.forEach(function (player){
+            var card = self.drawPile.pullTopCard();
+            player.hand.addTopCard(card);
+        });
+    }
+&nbsp;
+    var c = this.drawPile.pullTopCard();
+    this.discardPile.addTopCard(c);
+    return this;
+};
+&nbsp;
+Game.prototype.status = <span class="fstat-no" title="function not covered" >function (player) {</span>
+<span class="cstat-no" title="statement not covered" >    var status = {};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (this.isFull()) {</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        status.players = this.players.map(<span class="fstat-no" title="function not covered" >function (p) {</span></span>
+<span class="cstat-no" title="statement not covered" >            return { name: p.name, class: p.class, cardCount: p.hand.count() };</span>
+        });
+<span class="cstat-no" title="statement not covered" >        status.deckRemaining = this.drawPile.count();</span>
+<span class="cstat-no" title="statement not covered" >        status.facedCard = this.discardPile.topCard().asValue();</span>
+<span class="cstat-no" title="statement not covered" >        if (status.facedCard === 8) {</span>
+<span class="cstat-no" title="statement not covered" >            status.calledSuit = this.calledSuit.asValue();</span>
+        }
+<span class="cstat-no" title="statement not covered" >        status.currentPlayerId = this.players[this.currentPlayer].playerId;</span>
+<span class="cstat-no" title="statement not covered" >        status.currentPlayerIndex = this.currentPlayer;</span>
+<span class="cstat-no" title="statement not covered" >        status.hand = player.hand.map(<span class="fstat-no" title="function not covered" >function (c) {</span></span>
+<span class="cstat-no" title="statement not covered" >            return c.asValue();</span>
+        });
+<span class="cstat-no" title="statement not covered" >        status.lastPlays = this.history.slice(-this.players.length)</span>
+            .map(<span class="fstat-no" title="function not covered" >function (history) {</span>
+<span class="cstat-no" title="statement not covered" >                return {</span>
+                    playerIndex: history.playerIndex,
+                    draw: history.drawCount,
+                    play: history.playedCard.asValue(),
+                    suit: history.calledSuit.asValue()
+                };
+            });
+<span class="cstat-no" title="statement not covered" >        status.gameOver = this.gameOver;</span>
+<span class="cstat-no" title="statement not covered" >        if (this.gameOver &amp;&amp; this.winner) {</span>
+<span class="cstat-no" title="statement not covered" >            status.winner = this.winner;</span>
+        }
+    }
+&nbsp;
+    else {
+<span class="cstat-no" title="statement not covered" >        status.waiting = true;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return status;</span>
+};
+&nbsp;
+Game.prototype.draw = <span class="fstat-no" title="function not covered" >function (player) {</span>
+<span class="cstat-no" title="statement not covered" >    var drawnCard;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (this.gameOver) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error('game over, man, game over!');</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (player.playerId !== this.players[this.currentPlayer].playerId) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error('playing out of turn');</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (this.drawPile.count() === 0) {</span>
+<span class="cstat-no" title="statement not covered" >        this.gameOver = true;</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >        drawnCard = this.drawPile.pullTopCard();</span>
+<span class="cstat-no" title="statement not covered" >        player.hand.addTopCard(drawnCard);</span>
+<span class="cstat-no" title="statement not covered" >        player.hand.sort();</span>
+<span class="cstat-no" title="statement not covered" >        this.recordDraw();</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return drawnCard.asValue();</span>
+};
+&nbsp;
+Game.prototype.isValidPlay = <span class="fstat-no" title="function not covered" >function (card) {</span>
+<span class="cstat-no" title="statement not covered" >    var topCard = this.discardPile.topCard();</span>
+<span class="cstat-no" title="statement not covered" >    var currentSuit = topCard.rank.asValue() === 8</span>
+        ? this.calledSuit.asValue
+        : topCard.suit.asValue();
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return card.suit.asValue() === currentSuit</span>
+        || card.rank.asValue() === topCard.rank.asValue()
+        || card.rank === 8;
+};
+&nbsp;
+Game.prototype.play = <span class="fstat-no" title="function not covered" >function (player, card, suit) {</span>
+<span class="cstat-no" title="statement not covered" >    if (this.gameOver) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error('game over, man, game over!');</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (player.playerId !== this.players[this.currentPlayer].playerId) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error('playing out of turn');</span>
+    }
+<span class="cstat-no" title="statement not covered" >    if (!this.isValidPlay(card)) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error('not following suit or rank or playing 8');</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    var handCount = player.hand.count();</span>
+<span class="cstat-no" title="statement not covered" >    player.hand.removeCard(card);</span>
+<span class="cstat-no" title="statement not covered" >    if (player.hand.count() === handCount) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error('playing card not in hand');</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    this.discardPile.addTopCard(card);</span>
+<span class="cstat-no" title="statement not covered" >    if (card.suit.asValue() === 8) {</span>
+<span class="cstat-no" title="statement not covered" >        this.calledSuit = suit;</span>
+    }
+<span class="cstat-no" title="statement not covered" >    this.recordPlay (card, calledSuit);</span>
+<span class="cstat-no" title="statement not covered" >    this.playerIndex = (this.playerIndex + 1) % this.players.length;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    if (player.hand.count() === 0) {</span>
+<span class="cstat-no" title="statement not covered" >        this.gameOver = 1;</span>
+<span class="cstat-no" title="statement not covered" >        this.winner = this.currentPlayer;</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return this;</span>
+};
+&nbsp;
+// now we put the server together
+&nbsp;
+&nbsp;
+var serverVerbs = {
+    register: {
+        requiredParameters: [ 'playerName', 'playerClass' ],
+        defaults: { desiredGameSize: 0 },
+        action: <span class="fstat-no" title="function not covered" >function (input) {</span>
+<span class="cstat-no" title="statement not covered" >            var newPlayer = new Player(input.playerName, input.playerClass,</span>
+                input.desiredGameSize);
+<span class="cstat-no" title="statement not covered" >            Player.allPlayers[newPlayer.playerId] = newPlayer;</span>
+<span class="cstat-no" title="statement not covered" >            newPlayer.assignToGame();</span>
+<span class="cstat-no" title="statement not covered" >            return {};</span>
+        }
+    },
+&nbsp;
+    status: {
+        requiredParameters: [ 'playerId', 'playerKey' ],
+        action: <span class="fstat-no" title="function not covered" >function (input) {</span>
+<span class="cstat-no" title="statement not covered" >            var player = Player.allPlayers[input.playerId];</span>
+<span class="cstat-no" title="statement not covered" >            var game = Game.byPlayerId[input.playerId];</span>
+<span class="cstat-no" title="statement not covered" >            return game.status(player);</span>
+        }
+    },
+&nbsp;
+    play: {
+        requiredParameters: [ 'playerId', 'playerKey', 'cardValue' ],
+        defaults: { suitValue: 0 },
+        action: <span class="fstat-no" title="function not covered" >function (input) {</span>
+<span class="cstat-no" title="statement not covered" >            var player = Player.allPlayers[input.playerId];</span>
+<span class="cstat-no" title="statement not covered" >            var game = Game.byPlayerId[input.playerId];</span>
+<span class="cstat-no" title="statement not covered" >            game.play(player, new Card(input.cardValue), new Suit(input.suitValue));</span>
+<span class="cstat-no" title="statement not covered" >            return {};</span>
+        }
+    },
+    draw: {
+        requiredParameters: [ 'playerId', 'playerKey' ],
+        action: <span class="fstat-no" title="function not covered" >function (input) {</span>
+<span class="cstat-no" title="statement not covered" >            var player = Player.allPlayers[input.playerId];</span>
+<span class="cstat-no" title="statement not covered" >            var game = Game.byPlayerId[input.playerId];</span>
+<span class="cstat-no" title="statement not covered" >            return { drawnCard: game.draw(player) };</span>
+        }
+    }
+};
+&nbsp;
+<span class="fstat-no" title="function not covered" >function consolidateInputs (verbName, requiredParams, defaultParams, postData) {</span>
+<span class="cstat-no" title="statement not covered" >    var input = {};</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    requiredParams.append(Object.keys(defaultParams)).forEach(<span class="fstat-no" title="function not covered" >function (key) {</span></span>
+<span class="cstat-no" title="statement not covered" >        input[key] = postData[key] || defaultParams[key];</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (input[key] === undefined) {</span>
+<span class="cstat-no" title="statement not covered" >            throw new Error('required parameter ' + key + ' not passed in call to ' + verbName);</span>
+        }
+    });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return input;</span>
+}
+&nbsp;
+// this isn't really a module, but here we export the things we intend to unit-test
+&nbsp;
+module.exports = {
+    generateKey: generateKey,
+    Player: Player,
+    Game: Game,
+    consolidateInputs: consolidateInputs
+};
+&nbsp;
+&nbsp;
+// here endeth the easily unit-testable code
+&nbsp;
+var requestSerial = 1;
+&nbsp;
+<span class="missing-if-branch" title="if path not taken"" >I</span>if (require.main === module) {
+&nbsp;
+    // only start the server if we're loaded directly
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    http.createServer(<span class="fstat-no" title="function not covered" >function (request, response){</span></span>
+<span class="cstat-no" title="statement not covered" >        request.crazyEightsSerial = requestSerial;</span>
+<span class="cstat-no" title="statement not covered" >        response.crazyEightsSerial = requestSerial;</span>
+<span class="cstat-no" title="statement not covered" >        requestSerial++;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        var requestInfo = url.parse(request.url, true);</span>
+<span class="cstat-no" title="statement not covered" >        var requestBody = '';</span>
+<span class="cstat-no" title="statement not covered" >        var verbName = requestInfo.pathname.slice(1);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (serverVerbas[verbName] !== undefined) {</span>
+<span class="cstat-no" title="statement not covered" >            request.on('data', <span class="fstat-no" title="function not covered" >function (data) {</span> <span class="cstat-no" title="statement not covered" >requestBody += data; </span>});</span>
+<span class="cstat-no" title="statement not covered" >            request.on('end', <span class="fstat-no" title="function not covered" >function () {</span></span>
+<span class="cstat-no" title="statement not covered" >                var postData = qs.parse(requestBody);</span>
+<span class="cstat-no" title="statement not covered" >                var responseBody;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                try {</span>
+<span class="cstat-no" title="statement not covered" >                    var input = consolidateInputs(verbName,</span>
+                        serverVerbs[verbName].requiredParameters,
+                        serverVerbs[verbName].defaults, postData);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    var actionResponse = verb.action(input);</span>
+<span class="cstat-no" title="statement not covered" >                    responseBody = { status: 'OK' };</span>
+<span class="cstat-no" title="statement not covered" >                    if (Object.keys(actionResponse).length &gt; 0) {</span>
+<span class="cstat-no" title="statement not covered" >                        responseBody.info = actionResponse;</span>
+                    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >                    response.writeHead(200, { 'Content-Type': 'application/json' });</span>
+<span class="cstat-no" title="statement not covered" >                    response.end(JSON.stringify(responseBody));</span>
+&nbsp;
+                }
+                catch (err) {
+<span class="cstat-no" title="statement not covered" >                    response.writeHead(400);</span>
+<span class="cstat-no" title="statement not covered" >                    responseBody = {</span>
+                        status: 'NOT OK',
+                        errorName: err.name,
+                        errorMessage: err.message };
+<span class="cstat-no" title="statement not covered" >                    response.end(JSON.stringify(responseBody));</span>
+&nbsp;
+                }
+            });
+        }
+        else {
+<span class="cstat-no" title="statement not covered" >            response.writeHead(403);</span>
+<span class="cstat-no" title="statement not covered" >            response.end('Forbidden method');</span>
+        }
+&nbsp;
+    }).listen(8888);
+&nbsp;
+}
+&nbsp;
+&nbsp;</pre></td></tr>
+</table></pre>
+
+</div>
+<div class="footer">
+    <div class="meta">Generated by <a href="http://istanbul-js.org/" target="_blank">istanbul</a> at Sat Jun 01 2013 22:58:43 GMT-0400 (EDT)</div>
+</div>
+
+<script src="../prettify.js"></script>
+
+<script src="http://yui.yahooapis.com/3.6.0/build/yui/yui-min.js"></script>
+<script>
+
+    YUI().use('datatable', function (Y) {
+
+        var formatters = {
+          pct: function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              try {
+                  return o.value.toFixed(2) + '%';
+              } catch (ex) { return o.value + '%'; }
+          },
+          html: function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              return o.record.get(o.column.key + '_html');
+          }
+        },
+          defaultFormatter = function (o) {
+              o.className += o.record.get('classes')[o.column.key];
+              return o.value;
+          };
+
+        function getColumns(theadNode) {
+            var colNodes = theadNode.all('tr th'),
+                cols = [],
+                col;
+            colNodes.each(function (colNode) {
+                col = {
+                    key: colNode.getAttribute('data-col'),
+                    label: colNode.get('innerHTML') || ' ',
+                    sortable: !colNode.getAttribute('data-nosort'),
+                    className: colNode.getAttribute('class'),
+                    type: colNode.getAttribute('data-type'),
+                    allowHTML: colNode.getAttribute('data-html') === 'true' || colNode.getAttribute('data-fmt') === 'html'
+                };
+                col.formatter = formatters[colNode.getAttribute('data-fmt')] || defaultFormatter;
+                cols.push(col);
+            });
+            return cols;
+        }
+
+        function getRowData(trNode, cols) {
+            var tdNodes = trNode.all('td'),
+                    i,
+                    row = { classes: {} },
+                    node,
+                    name;
+            for (i = 0; i < cols.length; i += 1) {
+                name = cols[i].key;
+                node = tdNodes.item(i);
+                row[name] = node.getAttribute('data-value') || node.get('innerHTML');
+                row[name + '_html'] = node.get('innerHTML');
+                row.classes[name] = node.getAttribute('class');
+                //Y.log('Name: ' + name + '; Value: ' + row[name]);
+                if (cols[i].type === 'number') { row[name] = row[name] * 1; }
+            }
+            //Y.log(row);
+            return row;
+        }
+
+        function getData(tbodyNode, cols) {
+            var data = [];
+            tbodyNode.all('tr').each(function (trNode) {
+                data.push(getRowData(trNode, cols));
+            });
+            return data;
+        }
+
+        function replaceTable(node) {
+            if (!node) { return; }
+            var cols = getColumns(node.one('thead')),
+                data = getData(node.one('tbody'), cols),
+                table,
+                parent = node.get('parentNode');
+
+            table = new Y.DataTable({
+                columns: cols,
+                data: data,
+                sortBy: 'file'
+            });
+            parent.set('innerHTML', '');
+            table.render(parent);
+        }
+
+        Y.on('domready', function () {
+            replaceTable(Y.one('div.coverage-summary table'));
+            if (typeof prettyPrint === 'function') {
+                prettyPrint();
+            }
+        });
+    });
+</script>
+</body>
+</html>

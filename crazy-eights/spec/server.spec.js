@@ -11,6 +11,15 @@
 var util = require('util');
 
 var testMe = require('../crazy-eights-server.js');
+var Card = require('../card.js').Card;
+var Suit = require('../card.js').Suit;
+
+var testPlayerNames = [
+    'adam', 'bob', 'chet', 'dan', 'ed', 'frank', 'gabe', 'hank',
+    'ian', 'joe', 'ken', 'lou', 'mike', 'ned', 'owen', 'phil',
+    'quentin', 'rich', 'sam', 'todd', 'uri', 'victor', 'will',
+    'xavier', 'yves', 'zach'
+];
 
 function dump(arg) {
     console.log(util.inspect(arg, { showHidden: true }));
@@ -45,13 +54,6 @@ describe('utility function generateKey', function () {
 });
 
 describe('Player class objects', function (){
-
-    var testPlayerNames = [
-        'adam', 'bob', 'chet', 'dan', 'ed', 'frank', 'gabe', 'hank',
-        'ian', 'joe', 'ken', 'lou', 'mike', 'ned', 'owen', 'phil',
-        'quentin', 'rich', 'sam', 'todd', 'uri', 'victor', 'will',
-        'xavier', 'yves', 'zach'
-    ];
 
     it('should create players successfully without duplicating IDs', function(){
         var allPlayersById = {};
@@ -154,3 +156,66 @@ describe('Player class objects', function (){
         });
 
 });
+
+describe('Game class objects', function(){
+    it('should keep track of how many players it wants', function(){
+        var pNames = testPlayerNames.concat(testPlayerNames);
+        [2, 3, 4, 5].forEach(function (playerCount) {
+            var playersByName = {};
+            var p = new testMe.Player(pNames.shift(), 'test', playerCount);
+            p.assignToGame();
+            var g = testMe.Game.byPlayerId[p.playerId];
+
+            while (!g.isFull()) {
+                var q = new testMe.Player(pNames.shift(), 'test', 0);
+                q.assignToGame();
+            }
+
+            expect(g.players.length).toEqual(playerCount);
+            expect(g.players.length).toEqual(g.desiredPlayers);
+            expect(g.drawPile.count()).toEqual(52 - playerCount * 8 - 1);
+            expect(g.discardPile.count()).toEqual(1);
+            expect(g.history.length).toEqual(0);
+            expect(g.calledSuit).not.toBeDefined();
+            expect(g.gameOver).toBeFalsy();
+            expect(g.winner).not.toBeDefined();
+        });
+    });
+
+    it('should correctly record draws and plays', function () {
+        var plays = [ { draws: 3, card: new Card ('5', 'H') },
+            { draws: 0, card: new Card('2', 'S') },
+            { draws: 0, card: new Card('6', 'D') },
+            { draws: 1, card: new Card('8', 'C'), suit: new Suit('S') }
+        ];
+
+        var g = new testMe.Game(3);
+
+        plays.forEach(function (thisPlay) {
+            var i;
+            for (i = 0; i < thisPlay.draws; i++) {
+                g.recordDraw();
+            }
+            g.recordPlay(thisPlay.card, thisPlay.suit);
+            g.currentPlayer++;
+            g.currentPlayer %= 3;
+        });
+
+        var playerIdx = 0;
+
+        plays.forEach(function (thisPlay, i) {
+            var thisRecord = g.history[i];
+
+            expect(thisRecord.playerIndex).toEqual(playerIdx);
+            expect(thisPlay.draws).toEqual(thisRecord.draws);
+            expect(thisPlay.card.asValue()).toEqual(thisRecord.card);
+            if (thisPlay.card.rank.asValue() === 8) {
+                expect(thisPlay.suit.asValue()).toEqual(thisRecord.calledSuit);
+            }
+            playerIdx++;
+            playerIdx %= 3;
+        });
+    });
+
+});
+

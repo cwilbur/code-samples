@@ -104,17 +104,17 @@ Game.prototype.isFull = function () {
     return this.players.length === this.desiredPlayers;
 };
 
-Game.prototype.getCurrentHistoryRecord = function () {
+Game.prototype.popCurrentHistoryRecord = function () {
     var record;
 
     if (this.history.length === 0) {
-        record = { playerIndex: this.currentPlayer, draw: 0 };
+        record = { playerIndex: this.currentPlayer, draws: 0 };
     }
     else {
         record = this.history.pop();
         if (record.playerIndex !== this.currentPlayer) {
             this.history.push(record);
-            record = { playerIndex: this.currentPlayer, draw: 0 };
+            record = { playerIndex: this.currentPlayer, draws: 0 };
         }
     }
 
@@ -122,15 +122,15 @@ Game.prototype.getCurrentHistoryRecord = function () {
 };
 
 Game.prototype.recordDraw = function () {
-    var record = this.getCurrentHistoryRecord();
-    record.draw++;
+    var record = this.popCurrentHistoryRecord();
+    record.draws++;
     this.history.push(record);
 };
 
 Game.prototype.recordPlay = function (card, calledSuit) {
-    var record = this.getCurrentHistoryRecord();
+    var record = this.popCurrentHistoryRecord();
     record.card = card.asValue();
-    if (card.suit.asValue() === 8) {
+    if (card.rank.asValue() === 8) {
         record.calledSuit = calledSuit.asValue();
     }
     this.history.push(record);
