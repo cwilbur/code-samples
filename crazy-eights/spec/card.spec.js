@@ -19,7 +19,6 @@ var Rank = cardLib.Rank;
 var Card = cardLib.Card;
 var Deck = cardLib.Deck;
 
-//noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
 function dump(arg) {
     console.log(util.inspect(arg, { showHidden: true }));
 }
@@ -388,24 +387,79 @@ describe('Deck class objects', function () {
         });
     });
 
+    var allCardsBackwards = allCards.concat().reverse();
+
     it('should accept no arguments to the constructor', function () {
         expect(new Deck()).toBeDefined();
         expect(new Deck().count()).toEqual(0);
     });
 
-    it('should remember all cards added to it', function () {
+    it('should function correctly as a queue top-down', function () {
         var cardCount = 0;
         var d = new Deck();
         allCards.forEach(function (card) {
-            d.addCard(card);
-            expect(d.bottomCard()).toEqual(card);
+            d.addTopCard(card);
             cardCount++;
+            expect(d.topCard()).toEqual(card);
             expect(d.count()).toEqual(cardCount);
         });
 
         allCards.forEach(function (card) {
-            expect(d.topCard()).toEqual(card);
+            var c = d.pullBottomCard();
+            cardCount--;
+            expect(c).toEqual(card);
+            expect(d.count()).toEqual(cardCount);
+        });
+    });
+
+    it('should function correctly as a queue bottom-up', function () {
+        var cardCount = 0;
+        var d = new Deck();
+        allCards.forEach(function (card) {
+            d.addBottomCard(card);
+            cardCount++;
+            expect(d.bottomCard()).toEqual(card);
+            expect(d.count()).toEqual(cardCount);
+        });
+
+        allCards.forEach(function (card) {
             var c = d.pullTopCard();
+            cardCount--;
+            expect(c).toEqual(card);
+            expect(d.count()).toEqual(cardCount);
+        });
+    });
+
+    it('should function correctly as a stack top-down', function () {
+        var cardCount = 0;
+        var d = new Deck();
+        allCards.forEach(function (card) {
+            d.addTopCard(card);
+            cardCount++;
+            expect(d.topCard()).toEqual(card);
+            expect(d.count()).toEqual(cardCount);
+        });
+
+        allCardsBackwards.forEach(function (card) {
+            var c = d.pullTopCard();
+            cardCount--;
+            expect(c).toEqual(card);
+            expect(d.count()).toEqual(cardCount);
+        });
+    });
+
+    it('should function correctly as a stack bottom-up', function () {
+        var cardCount = 0;
+        var d = new Deck();
+        allCards.forEach(function (card) {
+            d.addBottomCard(card);
+            cardCount++;
+            expect(d.bottomCard()).toEqual(card);
+            expect(d.count()).toEqual(cardCount);
+        });
+
+        allCardsBackwards.forEach(function (card) {
+            var c = d.pullBottomCard();
             cardCount--;
             expect(c).toEqual(card);
             expect(d.count()).toEqual(cardCount);
@@ -454,6 +508,16 @@ describe('Deck class objects', function () {
             expect(cardCount).toEqual(d.count());
             expect(Object.keys(cardSet).length).toEqual(cardCount);
         }
+    });
+
+    it('should remove cards correctly', function(){
+        var d = new Deck().newDeck().shuffle();
+        var cardCount = d.count();
+        allCards.forEach(function (card) {
+            d.removeCard(card);
+            cardCount--;
+            expect(cardCount).toEqual(d.count());
+        });
     });
 
     it('should sort consistently', function () {

@@ -1,343 +1,405 @@
-//
-// crazy-eights-server.js 
-// 
-// A node.js script implementing a web server and web services protocol over HTTP
-// to manage games of crazy eights.
-//
-// invoke as node crazy-eights-server.js
-// 
-// change the variable gamePlayerCount to control how many players in a game
-// (games with 2 players are most interesting; games with 4+ players are over quickly)
-//
-// Copyright 2012 Charlton Wilbur, warts, bugs, and all.  
-//
+/**********************************************************************
+ *
+ * crazy-eights-server.js
+ *
+ * A node.js script implementing a web server and web services
+ * protocol over HTTP to manage games of crazy eights.
+ *
+ * Invoke as node crazy-eights-server.js
+ *
+ * Copyright 2013 Charlton Wilbur, warts, bugs, and all.
+ *
+ **********************************************************************/
 
-var Util = require('util');
-var HTTP = require('http');
-var URL = require('url');
-var QS = require('querystring');
+var http = require('http');
+var url = require('url');
+var qs = require('querystring');
 
-var Card = require('./card.js');
-var Deck = require('./deck.js');
+var util = require('util');
 
-var logLevel = 1;
-function logIt(level, message, precision) {
-    if ((precision && level === logLevel) || level <= logLevel) {
-        Util.log(message);
-    }
-}
-
-logIt(1, 'Crazy Eights Server Initializing');
-
-// constants 
-
-var playerQueue = [];
-var players = {};
-var gamePlayerCount = 2;
-
-// game management
-
-function Game() {
-    var i, j, p;
-
-    this.players = [];
-    this.currentPlayer = 0;
-    this.deck = Deck.create().initialize().shuffle();
-    this.topCard = undefined;
-    this.winner = undefined;
-
-    if (playerQueue.length < gamePlayerCount) {
-        throw { name: 'GameFail', message: 'Not enough players for a game' };
-    }
-
-    for (i = 0; i < gamePlayerCount; i++) {
-        p = playerQueue.shift();
-        logIt(1, 'Adding player ID ' + p.playerId + '(' + p.name + ')');
-        this.players.push(p);
-        p.setGame(this);
-    }
-
-    for (i = 0; i < 8; i++) {
-        for (j = 0; j < gamePlayerCount; j++) {
-            this.players[j].giveCard(this.deck.deal());
-        }
-    }
-
-    this.topCard = this.deck.deal();
-    this.currentSuit = this.topCard.suit();
-
-    logIt(1, 'New game created with '
-        + this.players.map(function (e, i, a) { return e.name; }).join(', '));
-}
-
-Game.prototype = {
-    status: function (p) {
-        var st = {
-            players: this.players.map(function (e, i, a) {
-                return { id: e.playerId, name: e.name, cards: e.handSize() };
-            }),
-
-            deckRemaining: this.deck.count(),
-            topCard: this.topCard,
-            currentSuit: this.currentSuit,
-            currentPlayer: this.players[this.currentPlayer].name,
-            winner: this.winner,
-        };
-
-        if (p !== undefined && p.game === this) {
-            st.playerHand = p.hand;
-        }
-
-        logIt(1, 'Player ' + p.name + ' requests status', true);
-        logIt(2, ['Status requested: ',
-            'players = [' + st.players.map(function (e, i, a) {
-                return e.name + '(' + e.cards + ')';
-            }).join(', ') + ']',
-            'current player = ' + st.currentPlayer,
-            'cards remaining in deck = ' + st.deckRemaining,
-            'top card of discard = ' + st.topCard.displayString(),
-            'current suit = ' + st.currentSuit,
-            'winner = ' + st.winner || 'nobody yet',
-            ].join('\n     '), true);
-
-        logIt(3, 'status requested; response is ' + JSON.stringify(st), true);
-
-        return st;
-    },
-
-	resign: function (player) {
-		logIt(1, 'Player ' + player.name + 'attempting to resign.');
-
-        if (this.players.indexOf(player) === -1) {
-            throw { name: 'NotInGame', message: 'Player not in this game' };
-        }
-      
-      	logIt(1, 'Resignation accepted.  Everyone loses.'); 
-        this.winner = 'nobody';
-	},        
-
-    play: function (player, card, eightSuit) {
-        logIt(1, 'Player ' + player.name + ' attempting to play ' + card.displayString()
-            + (card.rank() === '8' ? (' and declaring suit ' + eightSuit) : ''));
-
-        if (this.players.indexOf(player) === -1) {
-            throw { name: 'NotInGame', message: 'Player not in this game' };
-        }
-        if (this.players[this.currentPlayer] !== player) {
-            throw { name: 'BrokenRule', message: 'Player playing out of turn' };
-        }
-        if (player.hand.filter(function (x) {
-                return card.toString() === x.toString();
-            }).length === 0) {
-            throw { name: 'BrokenRule', message: 'Player playing a card not in hand' };
-        }
-        if (this.winner !== undefined) {
-            throw { name: 'BrokenRule', message: 'Game over' };
-        }
-        // is it a card that can legitimately be played?
-        // it matches suit or rank of the most recently played card(except for 8s)
-        // OR the most recently played card is an 8 and it matches the declared suit
-        // OR it is an 8
-
-        if ((this.topCard.rank() !== '8'
-                    && (this.topCard.rank() === card.rank()
-                        || this.topCard.suit() === card.suit()))
-                || (this.topCard.rank() === '8' && this.currentSuit === card.suit())
-                || (card.rank() === '8')) {
-            this.topCard = card;
-            
-            if (card.rank() === '8') {
-                this.currentSuit = eightSuit;
-            } 
-            
-            player.hand = player.hand.filter(function (x) { return card.toString() !== x.toString(); });
-            this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
-            logIt(1, 'Card accepted.');
-        } else {
-            logIt(1, 'Card not accepted');
-            throw { name: 'BrokenRule', message: 'Card cannot be played at this time' };
-        }
-
-        // did this player just win?
-
-        if (player.hand.length === 0) {
-            logIt(1, 'Player ' + player.name + ' wins!');
-            this.winner = player.name;
-        }
-    },
-
-    draw: function (player) {
-        if (this.players.indexOf(player) === -1) {
-            throw { name: 'NotInGame', message: 'Player not in this game' };
-        }
-        if (this.players[this.currentPlayer] !== player) {
-            throw { name: 'BrokenRule', message: 'Player playing out of turn' };
-        }
-        if (this.winner !== undefined) {
-            throw { name: 'BrokenRule', message: 'Game over' };
-        }
-
-        logIt(1, 'Player ' + player.name + ' attempting to draw.');
-
-        // any cards left?
-
-        if (this.deck.count() === 0) {
-            logIt(1, 'No cards left.  Everyone loses.');
-            this.winner = 'nobody';
-        } else {
-            logIt(1, 'Draw successful.');
-            player.giveCard(this.deck.deal());
-        }
-    },
-};
+var Deck = require('./card.js').Deck;
+var Hand = require('./card.js').Hand;
 
 // player management
 
-var nextPlayerId = 1;
+function generateKey(length) {
+    var i;
+    var key = '';
 
-function Player(name) {
-    this.playerId = nextPlayerId;
-    nextPlayerId++;
-    this.playerKey = Math.floor(Math.random() * 65536).toString(16);
-    this.name = name;
-    this.game = undefined;
-    this.hand = [];
-
-    players[this.playerId] = this;
-    playerQueue.push(this);
-
-    if (playerQueue.length >= gamePlayerCount) {
-        var g = new Game();
+    for (i = 0; i < length; i++) {
+        key += Math.floor(Math.random()*16).toString(16);
     }
+
+    return key;
 }
 
-Player.prototype = {
-    setGame: function (g) { this.game = g; return this; },
-    giveCard: function (c) { this.hand.push(c); return this; },
-    handSize: function () { return this.hand.length; }
+function Player(name, playerClass, desiredGameSize) {
+    this.name = name;
+    this.class = playerClass;
+    this.desiredGameSize = desiredGameSize;
+    this.playerId = Player.playerId;
+    Player.playerId++;
+    this.playerKey = generateKey(16);
+    this.hand = new Hand();
+    return this;
+}
+
+Player.playerId = 1;
+Player.allPlayers = {};
+
+Player.prototype.assignToGame = function () {
+    // if player insists on a particular size of game, assign him
+    // to that size game.
+
+    if (this.desiredGameSize !== 0) {
+        if (Game.waitingGames[this.desiredGameSize] === undefined) {
+            Game.waitingGames[this.desiredGameSize] = new Game(this.desiredGameSize);
+        }
+        Game.waitingGames[this.desiredGameSize].addPlayer(this);
+    }
+
+    // if there are no waiting games, put him in a 2-player
+
+    else if (Object.keys(Game.waitingGames).length === 0) {
+        Game.waitingGames[2] = new Game(2);
+        Game.waitingGames[2].addPlayer(this);
+    }
+
+    // otherwise, assign him to the largest game still waiting for players
+
+    else {
+
+        var largestGame = { desiredPlayers: -1 };
+        Object.keys(Game.waitingGames).forEach(function (size){
+            var thisGame = Game.waitingGames[size];
+            if (largestGame.desiredPlayers < thisGame.desiredPlayers) {
+                largestGame = thisGame;
+            }
+        });
+
+        largestGame.addPlayer(this);
+    }
+};
+
+// game management
+
+function Game(desiredPlayers) {
+
+    this.desiredPlayers = desiredPlayers;
+    this.players = [];
+    this.currentPlayer = 0;
+    this.drawPile = new Deck().newDeck().shuffle();
+    this.discardPile = new Deck();
+    this.calledSuit = undefined;
+    this.history = [];
+    this.gameOver = false;
+    this.winner = undefined;
+    return this;
+}
+
+Game.waitingGames = {};
+Game.byPlayerId = {};
+
+Game.prototype.isFull = function () {
+    return this.players.length === this.desiredPlayers;
+};
+
+Game.prototype.getCurrentHistoryRecord = function () {
+    var record;
+
+    if (this.history.length === 0) {
+        record = { playerIndex: this.currentPlayer, draw: 0 };
+    }
+    else {
+        record = this.history.pop();
+        if (record.playerIndex !== this.currentPlayer) {
+            this.history.push(record);
+            record = { playerIndex: this.currentPlayer, draw: 0 };
+        }
+    }
+
+    return record;
+};
+
+Game.prototype.recordDraw = function () {
+    var record = this.getCurrentHistoryRecord();
+    record.draw++;
+    this.history.push(record);
+};
+
+Game.prototype.recordPlay = function (card, calledSuit) {
+    var record = this.getCurrentHistoryRecord();
+    record.card = card.asValue();
+    if (card.suit.asValue() === 8) {
+        record.calledSuit = calledSuit.asValue();
+    }
+    this.history.push(record);
+};
+
+Game.prototype.addPlayer = function (player) {
+    if (Math.floor(Math.random() * 100) % 2) {
+        this.players.push(player);
+    }
+    else {
+        this.players.unshift(player);
+    }
+
+    Game.byPlayerId[player.playerId] = this;
+
+    if (this.isFull()) {
+
+        delete Game.waitingGames[this.desiredPlayers];
+        this.start();
+
+    }
+    return this;
+};
+
+Game.prototype.start = function () {
+    var i;
+    var self = this;
+
+    for (i = 0; i < 8; i++) {
+        this.players.forEach(function (player){
+            var card = self.drawPile.pullTopCard();
+            player.hand.addTopCard(card);
+        });
+    }
+
+    var c = this.drawPile.pullTopCard();
+    this.discardPile.addTopCard(c);
+    return this;
+};
+
+Game.prototype.status = function (player) {
+    var status = {};
+
+    if (this.isFull()) {
+
+        status.players = this.players.map(function (p) {
+            return { name: p.name, class: p.class, cardCount: p.hand.count() };
+        });
+        status.deckRemaining = this.drawPile.count();
+        status.facedCard = this.discardPile.topCard().asValue();
+        if (status.facedCard === 8) {
+            status.calledSuit = this.calledSuit.asValue();
+        }
+        status.currentPlayerId = this.players[this.currentPlayer].playerId;
+        status.currentPlayerIndex = this.currentPlayer;
+        status.hand = player.hand.map(function (c) {
+            return c.asValue();
+        });
+        status.lastPlays = this.history.slice(-this.players.length)
+            .map(function (history) {
+                return {
+                    playerIndex: history.playerIndex,
+                    draw: history.drawCount,
+                    play: history.playedCard.asValue(),
+                    suit: history.calledSuit.asValue()
+                };
+            });
+        status.gameOver = this.gameOver;
+        if (this.gameOver && this.winner) {
+            status.winner = this.winner;
+        }
+    }
+
+    else {
+        status.waiting = true;
+    }
+
+    return status;
+};
+
+Game.prototype.draw = function (player) {
+    var drawnCard;
+
+    if (this.gameOver) {
+        throw new Error('game over, man, game over!');
+    }
+    if (player.playerId !== this.players[this.currentPlayer].playerId) {
+        throw new Error('playing out of turn');
+    }
+
+    if (this.drawPile.count() === 0) {
+        this.gameOver = true;
+    } else {
+        drawnCard = this.drawPile.pullTopCard();
+        player.hand.addTopCard(drawnCard);
+        player.hand.sort();
+        this.recordDraw();
+    }
+
+    return drawnCard.asValue();
+};
+
+Game.prototype.isValidPlay = function (card) {
+    var topCard = this.discardPile.topCard();
+    var currentSuit = topCard.rank.asValue() === 8
+        ? this.calledSuit.asValue
+        : topCard.suit.asValue();
+
+    return card.suit.asValue() === currentSuit
+        || card.rank.asValue() === topCard.rank.asValue()
+        || card.rank === 8;
+};
+
+Game.prototype.play = function (player, card, suit) {
+    if (this.gameOver) {
+        throw new Error('game over, man, game over!');
+    }
+    if (player.playerId !== this.players[this.currentPlayer].playerId) {
+        throw new Error('playing out of turn');
+    }
+    if (!this.isValidPlay(card)) {
+        throw new Error('not following suit or rank or playing 8');
+    }
+
+    var handCount = player.hand.count();
+    player.hand.removeCard(card);
+    if (player.hand.count() === handCount) {
+        throw new Error('playing card not in hand');
+    }
+
+    this.discardPile.addTopCard(card);
+    if (card.suit.asValue() === 8) {
+        this.calledSuit = suit;
+    }
+    this.recordPlay (card, calledSuit);
+    this.playerIndex = (this.playerIndex + 1) % this.players.length;
+
+    if (player.hand.count() === 0) {
+        this.gameOver = 1;
+        this.winner = this.currentPlayer;
+    }
+
+    return this;
+};
+
+// now we put the server together
+
+
+var serverVerbs = {
+    register: {
+        requiredParameters: [ 'playerName', 'playerClass' ],
+        defaults: { desiredGameSize: 0 },
+        action: function (input) {
+            var newPlayer = new Player(input.playerName, input.playerClass,
+                input.desiredGameSize);
+            Player.allPlayers[newPlayer.playerId] = newPlayer;
+            newPlayer.assignToGame();
+            return {};
+        }
+    },
+
+    status: {
+        requiredParameters: [ 'playerId', 'playerKey' ],
+        action: function (input) {
+            var player = Player.allPlayers[input.playerId];
+            var game = Game.byPlayerId[input.playerId];
+            return game.status(player);
+        }
+    },
+
+    play: {
+        requiredParameters: [ 'playerId', 'playerKey', 'cardValue' ],
+        defaults: { suitValue: 0 },
+        action: function (input) {
+            var player = Player.allPlayers[input.playerId];
+            var game = Game.byPlayerId[input.playerId];
+            game.play(player, new Card(input.cardValue), new Suit(input.suitValue));
+            return {};
+        }
+    },
+    draw: {
+        requiredParameters: [ 'playerId', 'playerKey' ],
+        action: function (input) {
+            var player = Player.allPlayers[input.playerId];
+            var game = Game.byPlayerId[input.playerId];
+            return { drawnCard: game.draw(player) };
+        }
+    }
+};
+
+function consolidateInputs (verbName, requiredParams, defaultParams, postData) {
+    var input = {};
+
+    requiredParams.append(Object.keys(defaultParams)).forEach(function (key) {
+        input[key] = postData[key] || defaultParams[key];
+
+        if (input[key] === undefined) {
+            throw new Error('required parameter ' + key + ' not passed in call to ' + verbName);
+        }
+    });
+
+    return input;
+}
+
+// this isn't really a module, but here we export the things we intend to unit-test
+
+module.exports = {
+    generateKey: generateKey,
+    Player: Player,
+    Game: Game,
+    consolidateInputs: consolidateInputs
 };
 
 
-// HTTP server
-
-// verbs: register, resign, status, play, draw
-// register: takes name, responds with id, key
-// resign: responds with OK or NOT OK
-// status: takes id, key; responds with game status info
-// play: takes id, key, card, suit(only meaningful on 8); responds with OK or NOT OK
-// draw: takes id, key; responds with OK or NOT OK
-
-var gameMoves = {
-    '/register': function (params, res) {
-        var p = new Player(params.name),
-            response = JSON.stringify({ id: p.playerId, key: p.playerKey });
-        logIt(3,  'Response(' + res.crazyEightsSerial + '): 200 ' +  response);
-        res.end(response);
-    },
-
-	'/resign': function (params, res) {
-		var p = players[params.id],
-			response;
-
-        if (p.playerKey !== params.key) {
-            throw { name: 'Impostor', message: 'Player key mismatch' };
-        }
-        
-    	try {
-            p.game.resign(p);
-            response = JSON.stringify({ status: 'OK' });
-        } catch (e) {
-            e.status = 'NOT OK';
-            response = JSON.stringify(e);
-        }
-    },
-
-    '/status': function (params, res) {
-        var p = players[params.id],
-            response;
-
-        if (p.playerKey !== params.key) {
-            throw { name: 'Impostor', message: 'Player key mismatch' };
-        }
-
-        if (p.game === undefined) {
-            response = JSON.stringify({ currentPlayer: 'nobody', info: 'Waiting for players' });
-        } else {
-            response = JSON.stringify(p.game.status(p));
-        }
-
-        logIt(3,  'Response(' + res.crazyEightsSerial + '): 200 ' +  response);
-        res.end(response);
-    },
-
-    '/play': function (params, res) {
-        var p = players[params.id],
-            playedCard = Card.createFromSerial(params.card),
-            response;
-
-        if (p.playerKey !== params.key) {
-            throw { name: 'Impostor', message: 'Player key mismatch' };
-        }
-
-        try {
-            p.game.play(p, playedCard, params.declaredSuit);
-            response = JSON.stringify({ status: 'OK' });
-        } catch (e) {
-            e.status = 'NOT OK';
-            response = JSON.stringify(e);
-        }
-
-        logIt(2, 'Response to player ' + params.id + ': ' + response);
-        logIt(3,  'Response(' + res.crazyEightsSerial + '): 200 ' +  response);
-        res.end(response);
-    },
-
-    '/draw': function (params, res) {
-        var p = players[params.id],
-            response;
-
-        if (p.playerKey !== params.key) {
-            throw { name: 'Impostor', message: 'Player key mismatch' };
-        }
-
-        try {
-            p.game.draw(p);
-            response = JSON.stringify({ status: 'OK' });
-        } catch (e) {
-            e.status = 'NOT OK';
-            response = JSON.stringify(e);
-        }
-
-        logIt(3,  'Response(' + res.crazyEightsSerial + '): 200 ' +  response);
-        res.end(response);
-
-    },
-};
-
+// here endeth the easily unit-testable code
 
 var requestSerial = 1;
 
-HTTP.createServer(function (req, res) {
-    req.crazyEightsSerial = requestSerial;
-    res.crazyEightsSerial = requestSerial;
-    requestSerial++;
+if (require.main === module) {
 
-    var reqInfo = URL.parse(req.url, true),
-        reqBody = '';
+    // only start the server if we're loaded directly
 
-    if (gameMoves[reqInfo.pathname] !== undefined) {
-        res.writeHead(200, {'Content-Type': 'application/json'});
-        req.on('data', function (data) { reqBody += data; });
-        req.on('end', function () {
-            var postData = QS.parse(reqBody);
-            logIt(2, 'Request for ' + reqInfo.pathname + ' from user id ' + postData.id);
-            logIt(3,  'Request(' + req.crazyEightsSerial + '): ' + reqInfo.pathname + ': ' + JSON.stringify(postData));
-            gameMoves[reqInfo.pathname](postData, res);
-        });
-    } else {
-        res.writeHead(403);
-        res.end('Forbidden method');
-        logIt(3,  'Response(' + res.crazyEightsSerial + '): 403 Forbidden Method');
-    }
-}).listen(8080);
+    http.createServer(function (request, response){
+        request.crazyEightsSerial = requestSerial;
+        response.crazyEightsSerial = requestSerial;
+        requestSerial++;
+
+        var requestInfo = url.parse(request.url, true);
+        var requestBody = '';
+        var verbName = requestInfo.pathname.slice(1);
+
+        if (serverVerbas[verbName] !== undefined) {
+            request.on('data', function (data) { requestBody += data; });
+            request.on('end', function () {
+                var postData = qs.parse(requestBody);
+                var responseBody;
+
+                try {
+                    var input = consolidateInputs(verbName,
+                        serverVerbs[verbName].requiredParameters,
+                        serverVerbs[verbName].defaults, postData);
+
+                    var actionResponse = verb.action(input);
+                    responseBody = { status: 'OK' };
+                    if (Object.keys(actionResponse).length > 0) {
+                        responseBody.info = actionResponse;
+                    }
+
+                    response.writeHead(200, { 'Content-Type': 'application/json' });
+                    response.end(JSON.stringify(responseBody));
+
+                }
+                catch (err) {
+                    response.writeHead(400);
+                    responseBody = {
+                        status: 'NOT OK',
+                        errorName: err.name,
+                        errorMessage: err.message };
+                    response.end(JSON.stringify(responseBody));
+
+                }
+            });
+        }
+        else {
+            response.writeHead(403);
+            response.end('Forbidden method');
+        }
+
+    }).listen(8888);
+
+}
 

@@ -169,7 +169,7 @@ function Card() {
                 this.rank = new Rank(arguments[0].rank.asValue());
             }
         }
-        catch (err) {
+        catch (ignored) {
             throw new Error('Bad argument to Card constructor: ['
                 + util.inspect(arguments[0]) + ']');
         }
@@ -178,14 +178,14 @@ function Card() {
         try {
             this.rank = new Rank(arguments[0]);
         }
-        catch (err) {
+        catch (ignored) {
             throw new Error('Bad rank argument to Card constructor: ['
                 + util.inspect(arguments[0]) + ']');
         }
         try {
             this.suit = new Suit(arguments[1]);
         }
-        catch (err) {
+        catch (ignored) {
             throw new Error('Bad suit argument to Card constructor: ['
                 + util.inspect(arguments[1]) + ']');
         }
@@ -255,6 +255,10 @@ Deck.prototype.pullTopCard = function () {
     return this.cards.shift();
 };
 
+Deck.prototype.pullBottomCard = function () {
+    return this.cards.pop();
+};
+
 Deck.prototype.topCard = function () {
     return this.cards[0];
 };
@@ -267,13 +271,25 @@ Deck.prototype.sort = function () {
     this.cards.sort(function (a, b) { return a.compare(b)});
 };
 
-Deck.prototype.addCard = function (card) {
+Deck.prototype.addTopCard = function (card) {
+    this.cards.unshift(card);
+    return this;
+};
+
+Deck.prototype.addBottomCard = function (card) {
     this.cards.push(card);
     return this;
 };
 
 Deck.prototype.count = function () {
     return this.cards.length;
+};
+
+Deck.prototype.removeCard = function (card) {
+    this.cards = this.cards.filter(function (e){
+        return e.compare(card) !== 0;
+    });
+    return this;
 };
 
 // Exports
