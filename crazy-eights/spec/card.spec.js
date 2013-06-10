@@ -68,14 +68,14 @@ describe('utility function qw', function () {
 describe('Suit class objects', function () {
 
     var ref = {
-        club:    { letter: 'C', symbol: '♣', name: 'Clubs',
-            alternates:    ['Club'], obj: new Suit('Clubs') },
+        club: { letter: 'C', symbol: '♣', name: 'Clubs',
+            alternates: ['Club'], obj: new Suit('Clubs') },
         diamond: { letter: 'D', symbol: '♦', name: 'Diamonds',
-            alternates:    ['Diamond'], obj: new Suit('Diamonds') },
-        heart:   { letter: 'H', symbol: '♥', name: 'Hearts',
-            alternates:    ['Heart'], obj: new Suit('Hearts') },
-        spade:   { letter: 'S', symbol: '♠', name: 'Spades',
-            alternates:    ['Spade'], obj: new Suit('Spades') }
+            alternates: ['Diamond'], obj: new Suit('Diamonds') },
+        heart: { letter: 'H', symbol: '♥', name: 'Hearts',
+            alternates: ['Heart'], obj: new Suit('Hearts') },
+        spade: { letter: 'S', symbol: '♠', name: 'Spades',
+            alternates: ['Spade'], obj: new Suit('Spades') }
     };
 
     var suitKeys = Object.keys(ref);
@@ -157,31 +157,31 @@ describe('Rank class objects', function () {
 
     var ref = {
         A: { letter: 'A', value: 1, name: 'Ace',
-            obj:     new Rank('A') },
+            obj: new Rank('A') },
         2: { letter: '2', value: 2, name: 'Two', alternates: ['Deuce'],
-            obj:     new Rank('2') },
+            obj: new Rank('2') },
         3: { letter: '3', value: 3, name: 'Three', alternates: ['Trey'],
-            obj:     new Rank('3') },
+            obj: new Rank('3') },
         4: { letter: '4', value: 4, name: 'Four',
-            obj:     new Rank('4') },
+            obj: new Rank('4') },
         5: { letter: '5', value: 5, name: 'Five',
-            obj:     new Rank('5') },
+            obj: new Rank('5') },
         6: { letter: '6', value: 6, name: 'Six',
-            obj:     new Rank('6') },
+            obj: new Rank('6') },
         7: { letter: '7', value: 7, name: 'Seven',
-            obj:     new Rank('7') },
+            obj: new Rank('7') },
         8: { letter: '8', value: 8, name: 'Eight',
-            obj:     new Rank('8') },
+            obj: new Rank('8') },
         9: { letter: '9', value: 9, name: 'Nine',
-            obj:     new Rank('9') },
+            obj: new Rank('9') },
         T: { letter: 'T', value: 10, name: 'Ten',
-            obj:     new Rank('T') },
+            obj: new Rank('T') },
         J: { letter: 'J', value: 11, name: 'Jack',
-            obj:     new Rank('J') },
+            obj: new Rank('J') },
         Q: { letter: 'Q', value: 12, name: 'Queen',
-            obj:     new Rank('Q') },
+            obj: new Rank('Q') },
         K: { letter: 'K', value: 13, name: 'King',
-            obj:     new Rank('K') }
+            obj: new Rank('K') }
     };
 
     var rankKeys = Object.keys(ref);
@@ -364,8 +364,9 @@ describe('Card class objects', function () {
 
     it('should produce correctly formatted display strings', function () {
         allCards.forEach(function (thisCard) {
-            expect(thisCard.asShortASCIIString()).toEqual(thisCard.rank.asLetter()
-                + thisCard.suit.asLetter());
+            expect(thisCard.asShortASCIIString())
+                .toEqual(thisCard.rank.asLetter()
+                    + thisCard.suit.asLetter());
             expect(thisCard.asShortString()).toEqual(thisCard.rank.asLetter()
                 + thisCard.suit.asSymbol());
             expect(thisCard.asLongString()).toEqual(thisCard.rank.asName()
@@ -510,7 +511,7 @@ describe('Deck class objects', function () {
         }
     });
 
-    it('should remove cards correctly', function(){
+    it('should remove cards correctly', function () {
         var d = new Deck().newDeck().shuffle();
         var cardCount = d.count();
         allCards.forEach(function (card) {

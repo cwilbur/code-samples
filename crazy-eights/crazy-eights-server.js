@@ -27,7 +27,7 @@ function generateKey(length) {
     var key = '';
 
     for (i = 0; i < length; i++) {
-        key += Math.floor(Math.random()*16).toString(16);
+        key += Math.floor(Math.random() * 16).toString(16);
     }
 
     return key;
@@ -53,7 +53,8 @@ Player.prototype.assignToGame = function () {
 
     if (this.desiredGameSize !== 0) {
         if (Game.waitingGames[this.desiredGameSize] === undefined) {
-            Game.waitingGames[this.desiredGameSize] = new Game(this.desiredGameSize);
+            Game.waitingGames[this.desiredGameSize] =
+                new Game(this.desiredGameSize);
         }
         Game.waitingGames[this.desiredGameSize].addPlayer(this);
     }
@@ -70,7 +71,7 @@ Player.prototype.assignToGame = function () {
     else {
 
         var largestGame = { desiredPlayers: -1 };
-        Object.keys(Game.waitingGames).forEach(function (size){
+        Object.keys(Game.waitingGames).forEach(function (size) {
             var thisGame = Game.waitingGames[size];
             if (largestGame.desiredPlayers < thisGame.desiredPlayers) {
                 largestGame = thisGame;
@@ -129,9 +130,9 @@ Game.prototype.recordDraw = function () {
 
 Game.prototype.recordPlay = function (card, calledSuit) {
     var record = this.popCurrentHistoryRecord();
-    record.card = card.asValue();
+    record.card = card;
     if (card.rank.asValue() === 8) {
-        record.calledSuit = calledSuit.asValue();
+        record.calledSuit = calledSuit;
     }
     this.history.push(record);
 };
@@ -160,7 +161,7 @@ Game.prototype.start = function () {
     var self = this;
 
     for (i = 0; i < 8; i++) {
-        this.players.forEach(function (player){
+        this.players.forEach(function (player) {
             var card = self.drawPile.pullTopCard();
             player.hand.addTopCard(card);
         });
@@ -168,6 +169,7 @@ Game.prototype.start = function () {
 
     var c = this.drawPile.pullTopCard();
     this.discardPile.addTopCard(c);
+    this.calledSuit = c.suit;
     return this;
 };
 
@@ -181,21 +183,20 @@ Game.prototype.status = function (player) {
         });
         status.deckRemaining = this.drawPile.count();
         status.facedCard = this.discardPile.topCard().asValue();
-        if (status.facedCard === 8) {
-            status.calledSuit = this.calledSuit.asValue();
-        }
+        status.calledSuit = this.calledSuit.asValue();
         status.currentPlayerId = this.players[this.currentPlayer].playerId;
         status.currentPlayerIndex = this.currentPlayer;
-        status.hand = player.hand.map(function (c) {
+        status.hand = player.hand.cards.map(function (c) {
             return c.asValue();
         });
-        status.lastPlays = this.history.slice(-this.players.length)
-            .map(function (history) {
+        status.lastPlays =
+            this.history.slice(-this.players.length).map(function (history) {
                 return {
                     playerIndex: history.playerIndex,
-                    draw: history.drawCount,
-                    play: history.playedCard.asValue(),
-                    suit: history.calledSuit.asValue()
+                    draw: history.draws || 0,
+                    play: history.card.asValue(),
+                    suit: history.calledSuit ?
+                          history.calledSuit.asValue() : undefined
                 };
             });
         status.gameOver = this.gameOver;
@@ -223,7 +224,8 @@ Game.prototype.draw = function (player) {
 
     if (this.drawPile.count() === 0) {
         this.gameOver = true;
-    } else {
+    }
+    else {
         drawnCard = this.drawPile.pullTopCard();
         player.hand.addTopCard(drawnCard);
         player.hand.sort();
@@ -234,14 +236,14 @@ Game.prototype.draw = function (player) {
 };
 
 Game.prototype.isValidPlay = function (card) {
+
     var topCard = this.discardPile.topCard();
-    var currentSuit = topCard.rank.asValue() === 8
-        ? this.calledSuit.asValue
-        : topCard.suit.asValue();
+    var currentSuit = topCard.rank.asValue() === 8 ?
+                      this.calledSuit.asValue() : topCard.suit.asValue();
 
     return card.suit.asValue() === currentSuit
         || card.rank.asValue() === topCard.rank.asValue()
-        || card.rank === 8;
+        || card.rank.asValue() === 8;
 };
 
 Game.prototype.play = function (player, card, suit) {
@@ -262,11 +264,13 @@ Game.prototype.play = function (player, card, suit) {
     }
 
     this.discardPile.addTopCard(card);
+    this.calledSuit = card.suit;
     if (card.suit.asValue() === 8) {
         this.calledSuit = suit;
     }
-    this.recordPlay (card, calledSuit);
-    this.playerIndex = (this.playerIndex + 1) % this.players.length;
+
+    this.recordPlay(card, suit);
+    this.currentPlayer = (this.currentPlayer + 1) % this.players.length;
 
     if (player.hand.count() === 0) {
         this.gameOver = 1;
@@ -277,7 +281,6 @@ Game.prototype.play = function (player, card, suit) {
 };
 
 // now we put the server together
-
 
 var serverVerbs = {
     register: {
@@ -307,7 +310,8 @@ var serverVerbs = {
         action: function (input) {
             var player = Player.allPlayers[input.playerId];
             var game = Game.byPlayerId[input.playerId];
-            game.play(player, new Card(input.cardValue), new Suit(input.suitValue));
+            game.play(player, new Card(input.cardValue),
+                new Suit(input.suitValue));
             return {};
         }
     },
@@ -321,21 +325,23 @@ var serverVerbs = {
     }
 };
 
-function consolidateInputs (verbName, requiredParams, defaultParams, postData) {
+function consolidateInputs(verbName, requiredParams, defaultParams, postData) {
     var input = {};
 
     requiredParams.append(Object.keys(defaultParams)).forEach(function (key) {
         input[key] = postData[key] || defaultParams[key];
 
         if (input[key] === undefined) {
-            throw new Error('required parameter ' + key + ' not passed in call to ' + verbName);
+            throw new Error('required parameter ' + key
+                + ' not passed in call to ' + verbName);
         }
     });
 
     return input;
 }
 
-// this isn't really a module, but here we export the things we intend to unit-test
+// this isn't really a module, but here we export the things
+// we intend to unit-test
 
 module.exports = {
     generateKey: generateKey,
@@ -343,7 +349,6 @@ module.exports = {
     Game: Game,
     consolidateInputs: consolidateInputs
 };
-
 
 // here endeth the easily unit-testable code
 
@@ -353,7 +358,7 @@ if (require.main === module) {
 
     // only start the server if we're loaded directly
 
-    http.createServer(function (request, response){
+    http.createServer(function (request, response) {
         request.crazyEightsSerial = requestSerial;
         response.crazyEightsSerial = requestSerial;
         requestSerial++;
@@ -379,7 +384,8 @@ if (require.main === module) {
                         responseBody.info = actionResponse;
                     }
 
-                    response.writeHead(200, { 'Content-Type': 'application/json' });
+                    response.writeHead(200,
+                        { 'Content-Type': 'application/json' });
                     response.end(JSON.stringify(responseBody));
 
                 }
