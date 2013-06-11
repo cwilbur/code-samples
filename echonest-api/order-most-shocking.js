@@ -62,15 +62,8 @@ async.series([
         // okay, we're in node, and we've invoked async
         // we might as well make things interesting
 
-
-
-
-
-
-
     },
     function(cb){
 
     }
 ], function(err, results){});
-
