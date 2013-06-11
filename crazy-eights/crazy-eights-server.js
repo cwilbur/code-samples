@@ -367,7 +367,7 @@ if (require.main === module) {
         var requestBody = '';
         var verbName = requestInfo.pathname.slice(1);
 
-        if (serverVerbas[verbName] !== undefined) {
+        if (serverVerbs[verbName] !== undefined) {
             request.on('data', function (data) { requestBody += data; });
             request.on('end', function () {
                 var postData = qs.parse(requestBody);
@@ -378,7 +378,7 @@ if (require.main === module) {
                         serverVerbs[verbName].requiredParameters,
                         serverVerbs[verbName].defaults, postData);
 
-                    var actionResponse = verb.action(input);
+                    var actionResponse = serverVerbs[verbName].action(input);
                     responseBody = { status: 'OK' };
                     if (Object.keys(actionResponse).length > 0) {
                         responseBody.info = actionResponse;

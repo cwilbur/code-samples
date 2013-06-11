@@ -315,7 +315,8 @@ describe('Game class objects', function () {
 
         var playerNames = game.players.map(function (p) { return p.name; });
         var currentTurn = 0;
-        var thisPlayerName, thisPlayer, cardToPlay, status, suitToCall;
+        var thisPlayerName, thisPlayer, thisPlayerDraws;
+        var status, cardToPlay, suitToCall;
 
         // first player: draw at least one, then draw until you can
         // follow suit, then follow suit -- but keep your 8
