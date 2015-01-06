@@ -187,10 +187,10 @@ non-exclusive, perpetual (for the duration of the applicable
 copyright) license to exercise the rights in the Work as
 stated below:
 
-  		* to Reproduce the Work, to incorporate the
-	  	Work into one or more Collections, and to
-	  	Reproduce the Work as incorporated in the
-	  	Collections;
+  	* to Reproduce the Work, to incorporate the
+	  Work into one or more Collections, and to
+	  Reproduce the Work as incorporated in the
+	  Collections;
 
   	* to create and Reproduce Adaptations provided that
 	  any such Adaptation, including any translation in
@@ -203,7 +203,7 @@ stated below:
 	  been modified.";
 
    	* to Distribute and Publicly Perform the Work
-	   including as incorporated in Collections; and,
+	  including as incorporated in Collections; and,
 
    	* to Distribute and Publicly Perform Adaptations.
 
