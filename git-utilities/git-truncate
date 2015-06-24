@@ -1,0 +1,25 @@
+#!/bin/bash
+
+# Invocation: cd to your repository, then git-truncate
+# refspec, where refspec is either a commit’s SHA1 hash-id,
+# or a tag.
+
+refspec=$1
+commitMessage=$2
+
+test -z $refspec && echo "refspec required." 1>&2 && exit 1
+
+git checkout --orphan temp $refspec
+if [ -z "$commitMessage" ] ; then
+  git commit
+else
+  git commit -m "$commitMessage"
+fi
+
+git rebase --onto temp $refspec master
+git branch -D temp
+
+git prune --progress
+git gc --aggressive
+
+

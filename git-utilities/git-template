@@ -1,0 +1,15 @@
+#!/bin/bash
+
+templateRepo=$1
+newRepo=$2
+
+commitsBack=5
+
+test -z $templateRepo && echo "template repo required." 1>&2 && exit 1
+test -z $newRepo && echo "new repo name required." 1>&2 && exit 1
+
+hub clone --origin source $templateRepo $newRepo
+cd $newRepo
+firstCommit=`hub log --pretty=oneline | head -5 | tail -1 | awk '{print $1}'`
+git truncate $firstCommit "Automatic truncation for templating"
+hub create $newRepo

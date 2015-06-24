@@ -54,6 +54,12 @@ records information about the games it plays so that a
 statistical analysis can be performed. 
 
 I invite you to clone the repository and examine the changes.  
+
+git-utilities (/bin/bash)
+-------------------------
+
+A few highly useful utilities that I found myself wishing for over and
+over.  So I wrote them.
     
 icmpd (C)
 ---------
@@ -150,3 +156,4 @@ For the record, the new orthodoxy looks like this:
     {
     ...
     }
+
