@@ -9,61 +9,69 @@ coordinating my schedule with someone else's.
 
 These are my hard requirements for a position:
 
-1.  It should be MBTA-accessible.  I live on the Ashmont branch
-of the Red Line and don't own a car.  This means that Cambridge,
-the Financial District, Back Bay, Somerville are all accessible. 
-Waltham and Burlington are not.  (If you are a recruiter working
-from outside the Boston area, feel free to ask about specific
-locations; Boston public transit is quirky in ways that aren't
-obvious, and you won't impress me by trying to fake knowledge you
-don't have.  Especially if you get it wrong.)
+## It must be accessible by public transit.
 
-2.  I don't care for Java.  I have spent the past 17 years
-assiduously avoiding Java, and more importantly the corporate
-culture of cog-in-a-machine programming and centralized command
-and control that Java has engendered.  I see little reason to
-change that now, especially as dynamic languages are starting to
-prove that they can easily outperform Java in the hands of
-competent programmers.  I will work with people who are writing
-Java, and I started my career by reading and explicating Java
-stack traces to Java developers; I have just come to the
-conclusion that my time is much more efficiently spent elsewhere.
+I live on the Ashmont branch of the Red Line and don't own a car.
+This means that Cambridge, the Financial District, Back Bay,
+Somerville are all accessible.  Waltham and Burlington are not.  (If
+you are a recruiter working from outside the Boston area, feel free to
+ask about specific locations; Boston public transit is quirky in ways
+that aren't obvious, and you won't impress me by trying to fake
+knowledge you don't have.  Especially if you get it wrong.)
+
+## Java is a non-starter.
+
+I don't care for Java.  I have spent the past 17 years assiduously
+avoiding Java, and more importantly the corporate culture of
+cog-in-a-machine programming and centralized command and control that
+Java has engendered.  I see little reason to change that now,
+especially as dynamic languages are starting to prove that they can
+easily outperform Java in the hands of competent programmers.  I will
+work with people who are writing Java, and I started my career by
+reading and explicating Java stack traces to Java developers; I have
+just come to the conclusion that my time is much more efficiently
+spent elsewhere.
 
 (I am actually willing to consider working in Java if you have a
 position that uses Java without subscribing to dysfunctional Java
 culture.  I know such positions exist, but they're few and far
 between.)
 
-3.  I don't do Windows on the server.  I started in Unix and
-Linux, and I have continued in the open source stack.  I've spent
-my entire career working on Unixlikes and open source platforms,
-and there's no material benefit to me or to a potential employer
-for me to switch now.
+## Windows on the server is a non-starter.
+
+I don't do Windows on the server.  I started in Unix and Linux, and I
+have continued in the open source stack.  I've spent my entire career
+working on Unixlikes and open source platforms, and there's no
+material benefit to me or to a potential employer for me to switch
+now.
 
 ("Unixlike" includes Linux, Solaris, FreeBSDs, OpenBSD, NetBSD, and
 the BSD derivatives, including Mac OS X.)
 
-4.  I will not use Windows as a primary desktop.  Given point 3,
-the requirement that my desktop be Windows is a sign of a
-hidebound and needlessly conformist central IT organization. 
-Both Mac OS X and Linux will integrate smoothly with Exchange
-email and calendaring, which is often the principal requirement
-for Windows in the enterprise in the first place.
+## Windows on the desktop means a culture clash.
 
-5.  The company must demonstrate a commitment to good software
-engineering practices.  I will ask in the interview about the use
-of version control and bug tracking software, and I am looking
-for best practices like continuous integration and automated
-testing, developers writing code and tests simultaneously, and
-the like.  A good starting point for a high-level view is Joel
-Spolsky's article at
+I will not use Windows as a primary desktop.  Given that I'm not
+working with Windows servers, the requirement that my desktop be
+Windows is a sign of a hidebound and needlessly conformist central IT
+organization.  Both Mac OS X and Linux will integrate smoothly with
+Exchange email and calendaring, which is often the principal
+requirement for Windows in the enterprise in the first place.
+
+## I want to work with professional software engineers, not mavericks,
+   ninjas, cowboys, and rock stars.
+
+The company must demonstrate a commitment to good software engineering
+practices.  I will ask in the interview about the use of version
+control and bug tracking software, and I am looking for best practices
+like continuous integration and automated testing, developers writing
+code and tests simultaneously, and the like.  A good starting point
+for a high-level view is Joel Spolsky's article at
 http://www.joelonsoftware.com/articles/fog0000000043.html is an
-excellent place to start, although it is showing its age and bias
-in that it was written with desktop software in mind, before the
-broad acceptance of agile development methodologies.  I will only
-be interested in working on a team scoring less than 6 on the
-Spolsky test under unusual circumstances, and if the score is 2
-or less I probably won't make it through the first interview.
+excellent place to start, although it is showing its age and bias in
+that it was written with desktop software in mind, before the broad
+acceptance of agile development methodologies. 
+
+# What I really want
 
 Aside from that, what I'm looking for is a senior or lead software
 engineer, team lead, or architect position, working preferably in Perl
@@ -97,5 +105,3 @@ earnest.
 All that said, if you have a position that you think will suit me, I'm
 happy to hear about it.
 
-Charlton Wilbur 
-cwilbur@chromatico.net
