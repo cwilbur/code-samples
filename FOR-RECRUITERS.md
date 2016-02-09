@@ -40,8 +40,8 @@ my entire career working on Unixlikes and open source platforms,
 and there's no material benefit to me or to a potential employer
 for me to switch now.
 
-("Unixlike" includes Linux, FreeBSDs, OpenBSD, NetBSD, and the BSD derivatives,
-including Mac OS X.)
+("Unixlike" includes Linux, Solaris, FreeBSDs, OpenBSD, NetBSD, and
+the BSD derivatives, including Mac OS X.)
 
 4.  I will not use Windows as a primary desktop.  Given point 3,
 the requirement that my desktop be Windows is a sign of a
@@ -77,26 +77,25 @@ experience expert, but I have worked closely with all three before to
 translate their visions into code.  I work best in heterogenous, self-
 organizing teams, using Agile processes; I do not work well in rigid
 command-and-control hierarchies. You can see my resume at
-http://www.chromatico.net/resume-charlton-wilbur.pdf
+https://github.com/cwilbur/code-samples/raw/master/Charlton-Wilbur-resume.pdf
 
-The short-term nature of some of the positions on my resume are
-of concern to some recruiters and some hiring managers, and I am
-prepared to discuss this in detail.  However, as a broad outline,
-i will note that in 2003 I decided that I would pursue consulting
-for a few years while I prepared myself to return to graduate
-school for a Ph.D. in music.  By 2005 I had realized that I did
-not have the temperament or aptitude for salesmanship to work
-successfully as an independent consultant.  Also, I had
-re-evaluated the economics of academia and realized that an
-academic career was likely to involve a lot of frustration and
-very little lucre -- I could give up the next five years of
-earning potential to get a Ph.D., and then if I was lucky, land a
-job making one-third to one-half of what I could make in software
--- and decided to work on a software engineering career in
+The short-term nature of some of the positions on my resume are of
+concern to some recruiters and some hiring managers, and I am prepared
+to discuss this in detail.  However, as a broad outline, i will note
+that in 2003 I decided that I would pursue consulting for a few years
+while I prepared myself to return to graduate school for a Ph.D. in
+music.  By 2005 I had realized that I did not have the temperament or
+aptitude for salesmanship to work successfully as an independent
+consultant.  Also, I had re-evaluated the economics of academia and
+realized that an academic career was likely to involve a lot of
+frustration and very little lucre -- I could give up the next five
+years of earning potential to get a Ph.D., and then if I was lucky,
+land a job making one-third to one-half of what I could make in
+software -- and decided to work on a software engineering career in
 earnest.
 
-All that said, if you have a position that you think will suit
-me, I'm happy to hear about it.
+All that said, if you have a position that you think will suit me, I'm
+happy to hear about it.
 
 Charlton Wilbur 
 cwilbur@chromatico.net
