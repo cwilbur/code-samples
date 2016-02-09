@@ -57,8 +57,7 @@ organization.  Both Mac OS X and Linux will integrate smoothly with
 Exchange email and calendaring, which is often the principal
 requirement for Windows in the enterprise in the first place.
 
-## I want to work with professional software engineers, not mavericks,
-   ninjas, cowboys, and rock stars.
+## I want to work with professional software engineers, not mavericks, ninjas, cowboys, or rock stars.
 
 The company must demonstrate a commitment to good software engineering
 practices.  I will ask in the interview about the use of version
