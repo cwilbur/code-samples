@@ -1,0 +1,54 @@
+<<<<<<< 6f8cf8d622ce23adf7f435446a92de9abf92fc1f
+# generated from grunt config, so don't keep
+karma-grunt.conf.js
+
+# secrets that don't belong on github
+secrets.json
+
+# Cortex
+neurons
+
+# Numerous always-ignore extensions
+*.bak
+*.patch
+*.diff
+*.err
+
+# temp file for git conflict merging
+*.orig
+*.log
+*.rej
+*.swo
+*.swp
+*.zip
+*.vi
+*~
+*.sass-cache
+*.tmp.html
+*.dump
+
+# OS or Editor folders
+.DS_Store
+._*
+.cache
+.project
+.settings
+.tmproj
+*.esproj
+*.sublime-project
+*.sublime-workspace
+nbproject
+thumbs.db
+*.iml
+
+# Folders to ignore
+.hg/
+.svn/
+.CVS/
+.idea/
+node_modules/
+jscoverage_lib/
+coverage/
+=======
+node_modules
+>>>>>>> Working but nowhere near complete

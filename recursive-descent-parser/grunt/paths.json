@@ -1,0 +1,40 @@
+{
+  "source_js": [
+    "app.js",
+    "lib/**/*.js",
+    "config/**/*.js",
+    "public/**/*.js",
+    "scripts/**/*.js"
+  ],
+  "code": "lib/**/*.js",
+  "tests": "spec/**/*.spec.js",
+  "libraries": "node_modules/**/*.spec.js",
+  "other": [
+    "Gruntfile.js",
+    "grunt/*.js"
+  ],
+  "project": [
+    "app.js",
+    "lib/**/*.js",
+    "spec/**/*.spec.js",
+    "config/**/*.js",
+    "config/**/*.json",
+    "public/**/*.js",
+    "scripts/**/*.js",
+    "templates/**/*.jade"
+  ],
+  "source_json": [
+    "lib/**/*.json"
+  ],
+  "tests_json": [
+    "spec/**/*.json"
+  ],
+  "other_json": [
+    "grunt/*.json"
+  ],
+  "project_json": [
+    "grunt/*.json",
+    "lib/**/*.json",
+    "spec/**/*.spec.json"
+  ]
+}
