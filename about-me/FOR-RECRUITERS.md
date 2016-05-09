@@ -60,15 +60,23 @@ requirement for Windows in the enterprise in the first place.
 ## I want to work with professional software engineers, not mavericks, ninjas, cowboys, or rock stars.
 
 The company must demonstrate a commitment to good software engineering
-practices.  I will ask in the interview about the use of version
-control and bug tracking software, and I am looking for best practices
-like continuous integration and automated testing, developers writing
-code and tests simultaneously, and the like.  A good starting point
-for a high-level view is Joel Spolsky's article at
-http://www.joelonsoftware.com/articles/fog0000000043.html is an
-excellent place to start, although it is showing its age and bias in
-that it was written with desktop software in mind, before the broad
-acceptance of agile development methodologies. 
+practices and to evidence-based decisionmaking. I will ask in the interview
+about the use of version control and bug tracking software, and I am looking
+for best practices like continuous integration and automated testing,
+developers writing code and tests simultaneously, and the like.  A good
+starting point for a high-level view is Joel Spolsky's article at
+http://www.joelonsoftware.com/articles/fog0000000043.html is an excellent
+place to start, although it is showing its age and bias in that it was written
+with desktop software in mind, before the broad acceptance of agile
+development methodologies.
+
+## The more independent customers, the better -- or B2B = BS
+
+When a company sells a product to another company, the focus is on courting
+the primary decisionmaker, and the more expensive the product, the more status
+and ego get in the way of quality and evidence-based decisionmakingq.  When a
+company sells a product to the public at large or has to compete for dozens of
+contracts, ignoring quality and evidence is corporate suicide.
 
 # What I really want
 

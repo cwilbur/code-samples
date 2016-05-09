@@ -1,3 +1,18 @@
+# Notice & warning
+
+The code here is intended as code samples to demonstrate the quality,
+clarity, and complexity of code that I am capable of writing. I'm
+releasing it under the BSD 3-clause license, which requires you to
+reproduce the copyright notice if you reuse or redistribute the code.
+
+In other words: you're free to use this code in any way you see fit,
+provided you give me appropriate credit for having written it. Don't
+try to pass it off as your own code: beyond being a cut-and-dried
+violation of the license, it's unethical; also, you will get caught
+sooner or later.
+
+# License`
+
 Copyright (c) 2015 Charlton Wilbur.
 All rights reserved.
 
